@@ -3,10 +3,10 @@ package entities
 type User struct {
 	Base
 	DisplayName  string
-	PhotoUrl     string
+	PhotoProfile string
 	Phone        string
 	CredentialID string
-	Credential   Credential	
+	Credential   Credential
 	AccessToken  string
 	RefreshToken string
 }

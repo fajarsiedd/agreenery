@@ -8,7 +8,7 @@ type User struct {
 	Base
 	DisplayName  string
 	Phone        string `gorm:"unique"`
-	PhotoUrl     string
+	PhotoProfile string
 	CredentialID string     `gorm:"size:191"`
 	Credential   Credential `gorm:"foreignKey:CredentialID;references:ID"`
 }
@@ -18,7 +18,7 @@ func (user User) FromEntity(userEntity entities.User) User {
 		Base:         user.Base.FromEntity(userEntity.Base),
 		DisplayName:  userEntity.DisplayName,
 		Phone:        userEntity.Phone,
-		PhotoUrl:     userEntity.PhotoUrl,
+		PhotoProfile: userEntity.PhotoProfile,
 		CredentialID: userEntity.CredentialID,
 		Credential:   user.Credential.FromEntity(userEntity.Credential),
 	}
@@ -29,7 +29,7 @@ func (user User) ToEntity() entities.User {
 		Base:         user.Base.ToEntity(),
 		DisplayName:  user.DisplayName,
 		Phone:        user.Phone,
-		PhotoUrl:     user.PhotoUrl,
+		PhotoProfile: user.PhotoProfile,
 		CredentialID: user.CredentialID,
 		Credential:   user.Credential.ToEntity(),
 	}
