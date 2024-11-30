@@ -15,6 +15,8 @@ import (
 )
 
 func InitRoutes(e *echo.Echo, db *gorm.DB) {
+	e.Use(middleware.CORS())
+
 	loggerConfig := middlewares.LoggerConfig{
 		Format: `[${time_rfc3339}] ${status} ${method} ${host}${path} ${latency_human}` + "\n",
 	}
