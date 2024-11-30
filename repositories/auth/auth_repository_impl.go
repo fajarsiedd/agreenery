@@ -4,6 +4,7 @@ import (
 	"go-agreenery/constants"
 	"go-agreenery/entities"
 	"go-agreenery/models"
+
 	"gorm.io/gorm"
 )
 
@@ -50,6 +51,16 @@ func (repository authRepository) Register(user entities.User) (entities.User, er
 		return nil
 	})
 	if err != nil {
+		return entities.User{}, err
+	}
+
+	return userModel.ToEntity(), nil
+}
+
+func (repository authRepository) FindUser(id string) (entities.User, error) {
+	userModel := models.User{}
+
+	if err := repository.db.Preload("Credential").First(&userModel, &id).Error; err != nil {
 		return entities.User{}, err
 	}
 

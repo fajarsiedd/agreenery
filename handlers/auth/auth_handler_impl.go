@@ -73,3 +73,17 @@ func (handler authHandler) GetNewTokens(c echo.Context) error {
 
 	return base.SuccessResponse(c, constants.GenerateTokenSuccess, response.RefreshTokenResponse{}.FromEntity(result))
 }
+
+func (handler authHandler) GetProfile(c echo.Context) error {
+	claims, _, err := middlewares.GetCurrentToken(c)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	result, err := handler.service.GetProfile(claims.UserID)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	return base.SuccessResponse(c, constants.GetProfileSuccess, response.ProfileResponse{}.FromEntity(result))
+}

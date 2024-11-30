@@ -61,7 +61,5 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	auth.POST("/login", handler.Login)
 	auth.POST("/register", handler.Register)
 	auth.POST("/refresh-token", handler.GetNewTokens, echojwt.WithConfig(jwtRefreshMiddlewareConfig))
-	auth.GET("/test", func(c echo.Context) error {
-		return c.JSON(200, "Hello")
-	}, echojwt.WithConfig(jwtMiddlewareConfig))
+	auth.GET("/me", handler.GetProfile, echojwt.WithConfig(jwtMiddlewareConfig))
 }

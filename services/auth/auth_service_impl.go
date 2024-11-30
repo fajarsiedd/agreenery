@@ -90,3 +90,7 @@ func (service authService) GetNewTokens(claims *middlewares.JWTCustomClaims, ref
 		RefreshToken: newRefreshToken,
 	}, nil
 }
+
+func (service authService) GetProfile(id string) (entities.User, error) {
+	return service.repository.FindUser(id)
+}
