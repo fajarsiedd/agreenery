@@ -80,7 +80,7 @@ func (repository authRepository) UpdateUser(user entities.User, selectedFields [
 
 	err := repository.db.Transaction(func(tx *gorm.DB) error {
 		userData := models.User{}
-		if err := tx.Preload("Credential").First(&userData).Error; err != nil {
+		if err := tx.Preload("Credential").First(&userData, &user.ID).Error; err != nil {
 			return constants.ErrUserNotFound
 		}
 
@@ -100,7 +100,7 @@ func (repository authRepository) UpdateUser(user entities.User, selectedFields [
 			return err
 		}
 
-		if err := tx.Preload("Credential").First(&userModel).Error; err != nil {
+		if err := tx.Preload("Credential").First(&userModel, &user.ID).Error; err != nil {
 			return constants.ErrUserNotFound
 		}
 
