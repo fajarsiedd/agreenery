@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"go-agreenery/constants"
 	"go-agreenery/entities"
 	"go-agreenery/models"
@@ -80,9 +81,12 @@ func (repository authRepository) UpdateUser(user entities.User, selectedFields [
 
 	err := repository.db.Transaction(func(tx *gorm.DB) error {
 		userData := models.User{}
-		if err := tx.Preload("Credential").First(&userData).Error; err != nil {
+		if err := tx.Preload("Credential").First(&userData, &user.ID).Error; err != nil {
 			return constants.ErrUserNotFound
 		}
+
+		fmt.Println(selectedFields)
+		fmt.Println(userData)
 
 		if err := tx.Select(selectedFields).Where("id = ?", userData.CredentialID).Updates(&userModel.Credential).Error; err != nil {
 			if err == gorm.ErrDuplicatedKey {
@@ -100,7 +104,7 @@ func (repository authRepository) UpdateUser(user entities.User, selectedFields [
 			return err
 		}
 
-		if err := tx.Preload("Credential").First(&userModel).Error; err != nil {
+		if err := tx.Preload("Credential").First(&userModel, &user.ID).Error; err != nil {
 			return constants.ErrUserNotFound
 		}
 

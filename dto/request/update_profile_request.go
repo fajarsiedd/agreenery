@@ -6,7 +6,7 @@ import (
 )
 
 type UpdateProfileRequest struct {
-	ID          string
+	ID          string `json:"-"`
 	DisplayName string `json:"display_name,omitempty"`
 	Phone       string `json:"phone,omitempty"`
 	Email       string `json:"email,omitempty" validate:"email"`
