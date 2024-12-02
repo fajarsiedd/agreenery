@@ -7,4 +7,5 @@ type AuthHandler interface {
 	Register(c echo.Context) error
 	GetNewTokens(c echo.Context) error
 	GetProfile(c echo.Context) error
+	UpdateProfile(c echo.Context) error
 }

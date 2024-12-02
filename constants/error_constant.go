@@ -14,6 +14,8 @@ var (
 	// AUTH
 	ErrInvalidToken      error = errors.New("token is invalid")
 	ErrIncorrectEmail    error = errors.New("email is incorrect")
+	ErrDuplicateEmail    error = errors.New("email is already used")
+	ErrDuplicatePhone    error = errors.New("phone is already used")
 	ErrIncorrectPassword error = errors.New("password is incorrect")
 	ErrUserNotFound      error = errors.New("user not found")
 	ErrAccessNotAllowed  error = errors.New("access not allowed")
