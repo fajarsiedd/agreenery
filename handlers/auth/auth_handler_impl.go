@@ -87,3 +87,30 @@ func (handler authHandler) GetProfile(c echo.Context) error {
 
 	return base.SuccessResponse(c, constants.GetProfileSuccess, response.ProfileResponse{}.FromEntity(result))
 }
+
+func (handler authHandler) UpdateProfile(c echo.Context) error {
+	req := request.UpdateProfileRequest{}
+
+	if err := c.Bind(&req); err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	if req.Email != "" {
+		if err := c.Validate(&req); err != nil {
+			return base.ErrorResponse(c, helpers.TranslateValidationErr(err))
+		}
+	}
+
+	claims, _, err := middlewares.GetCurrentToken(c)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+	req.ID = claims.UserID
+
+	result, err := handler.service.UpdateProfile(req.ToEntity(), req.ToCleanFields())
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	return base.SuccessResponse(c, constants.UpdateProfileSuccess, response.ProfileResponse{}.FromEntity(result))
+}

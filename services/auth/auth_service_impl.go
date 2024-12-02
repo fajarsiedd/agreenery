@@ -94,3 +94,7 @@ func (service authService) GetNewTokens(claims *middlewares.JWTCustomClaims, ref
 func (service authService) GetProfile(id string) (entities.User, error) {
 	return service.repository.FindUser(id)
 }
+
+func (service authService) UpdateProfile(user entities.User, selectedFields []string) (entities.User, error) {
+	return service.repository.UpdateUser(user, selectedFields)
+}
