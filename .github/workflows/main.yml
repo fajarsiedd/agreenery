@@ -32,7 +32,9 @@ jobs:
 
             - name: create google credentials file from secret
               run: |
-                echo "${{secrets.GOOGLE_CREDENTIALS}}" > | base64 --decode > google_credentials.json
+                echo "${{secrets.GOOGLE_CREDENTIALS}}" > temp_credentials.txt
+                base64 --decode temp_credentials.txt > google_credentials.json
+                rm temp_credentials.txt
                 chmod 600 google_credentials.json
 
             - name: build docker
