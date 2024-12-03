@@ -23,4 +23,8 @@ var (
 	// HASH PASSWORD
 	ErrInvalidHash              error = errors.New("the encoded hash is not in the correct format")
 	ErrIncompatibleArgonVersion error = errors.New("incompatible version of argon2")
+
+	// UPLOADER
+	ErrFileSizeExceedsLimit error = errors.New("file size exceeds 2 Mb limit")
+	ErrOnlyImageAllowed     error = errors.New("only image files are allowed")
 )

@@ -6,6 +6,8 @@ import (
 	"go-agreenery/helpers"
 	"go-agreenery/middlewares"
 	"go-agreenery/repositories/auth"
+	"mime/multipart"
+	"strings"
 )
 
 type authService struct {
@@ -97,4 +99,36 @@ func (service authService) GetProfile(id string) (entities.User, error) {
 
 func (service authService) UpdateProfile(user entities.User, selectedFields []string) (entities.User, error) {
 	return service.repository.UpdateUser(user, selectedFields)
+}
+
+func (service authService) UploadProfilePhoto(file multipart.File, userID string) (entities.User, error) {
+	user, err := service.repository.FindUser(userID)
+	if err != nil {
+		return entities.User{}, err
+	}
+
+	var oldObj string
+	if user.Photo != "" {
+		splittedStr := strings.Split(user.Photo, "/")
+		oldObj = splittedStr[len(splittedStr)-1]
+	}
+
+	params := helpers.UploaderParams{
+		File:         file,
+		OldObjectURL: oldObj,
+	}
+
+	url, err := helpers.UploadFile(params)
+	if err != nil {
+		return entities.User{}, err
+	}
+
+	user.Photo = url
+
+	result, err := service.repository.UpdateUser(user, []string{"photo"})
+	if err != nil {
+		return entities.User{}, err
+	}
+
+	return result, nil
 }

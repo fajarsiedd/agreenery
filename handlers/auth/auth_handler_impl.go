@@ -8,7 +8,9 @@ import (
 	"go-agreenery/helpers"
 	"go-agreenery/middlewares"
 	"go-agreenery/services/auth"
+	"io"
 
+	"github.com/h2non/filetype"
 	"github.com/labstack/echo/v4"
 )
 
@@ -113,4 +115,40 @@ func (handler authHandler) UpdateProfile(c echo.Context) error {
 	}
 
 	return base.SuccessResponse(c, constants.UpdateProfileSuccess, response.ProfileResponse{}.FromEntity(result))
+}
+
+func (handler authHandler) UploadProfilePhoto(c echo.Context) error {
+	file, err := c.FormFile("file")
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	var maxFileSize int64 = 1048576 * 2
+	if file.Size > maxFileSize {
+		return base.ErrorResponse(c, constants.ErrFileSizeExceedsLimit)
+	}
+
+	blobFile, err := file.Open()
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+	defer blobFile.Close()
+
+	temp, _ := file.Open()
+	buf, _ := io.ReadAll(temp)
+	if !filetype.IsImage(buf) {
+		return base.ErrorResponse(c, constants.ErrOnlyImageAllowed)
+	}
+
+	claims, _, err := middlewares.GetCurrentToken(c)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	user, err := handler.service.UploadProfilePhoto(blobFile, claims.UserID)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	return base.SuccessResponse(c, constants.UploadProfilePhotoSuccess, response.ProfileResponse{}.FromEntity(user))
 }
