@@ -25,20 +25,25 @@ jobs:
         steps:
             - name: checkout the code
               uses: actions/checkout@v2
+
             - name: create env file
               run: |
                 echo "${{secrets.ENV}}" >> .env
+
             - name: create google credentials file from secret
               run: |
-                echo "${{secrets.GOOGLE_CREDENTIALS}} > google_credentials.json"
-                chmod 600 google_credentials.json # Set appropriate permissions
+                echo "${{secrets.GOOGLE_CREDENTIALS}}" > google_credentials.json
+                chmod 600 google_credentials.json
+
             - name: build docker
               run: docker build -t fajarsdq/agreenery:1.0.0 .
+
             - name: docker hub login
               uses: docker/login-action@v1
               with: 
                 username: ${{secrets.DOCKER_USER}}
                 password: ${{secrets.DOCKER_TOKEN}}
+
             - name: push image
               run: docker push fajarsdq/agreenery:1.0.0
     deploy:
