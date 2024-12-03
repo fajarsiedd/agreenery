@@ -32,7 +32,12 @@ jobs:
 
             - name: create google credentials file from secret
               run: |
-                echo ${{secrets.GOOGLE_CREDENTIALS}} | base64 -d > google_credentials.json
+                if [ ! -x "$(command -v jq)" ]; then
+                  echo "jq not found, installing..."
+                  sudo apt-get update
+                  sudo apt-get install -y jq
+                fi
+                echo ${{secrets.GOOGLE_CREDENTIALS}} | base64 --decode | jq > google_credentials.json
 
             - name: build docker
               run: docker build -t fajarsdq/agreenery:1.0.0 .
