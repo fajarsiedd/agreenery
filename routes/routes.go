@@ -2,9 +2,11 @@ package routes
 
 import (
 	authHandler "go-agreenery/handlers/auth"
+	regionHandler "go-agreenery/handlers/region"
 	"go-agreenery/middlewares"
 	authRepo "go-agreenery/repositories/auth"
 	authService "go-agreenery/services/auth"
+	regionService "go-agreenery/services/region"
 	"os"
 	"time"
 
@@ -49,6 +51,12 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	}
 	jwtMiddlewareConfig := jwtConfig.NewJWTConfig()
 
+	initAuthRoute(e, db, &jwtConfig, jwtMiddlewareConfig)
+
+	initRegionRoute(e, jwtMiddlewareConfig)
+}
+
+func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
 	jwtRefreshConfig := middlewares.JWTConfig{
 		SecretKey:       os.Getenv("JWT_REFRESH_SECRET_KEY"),
 		ExpiresDuration: 1 * 24 * 7,
@@ -56,7 +64,7 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	jwtRefreshMiddlewareConfig := jwtRefreshConfig.NewJWTConfig()
 
 	repository := authRepo.NewAuthRepository(db)
-	service := authService.NewAuthService(repository, &jwtConfig, &jwtRefreshConfig)
+	service := authService.NewAuthService(repository, jwtConfig, &jwtRefreshConfig)
 	handler := authHandler.NewAuthHandler(service)
 
 	auth := e.Group("/api/v1/auth")
@@ -66,4 +74,15 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	auth.GET("/me", handler.GetProfile, echojwt.WithConfig(jwtMiddlewareConfig))
 	auth.PUT("/me", handler.UpdateProfile, echojwt.WithConfig(jwtMiddlewareConfig))
 	auth.POST("/me/photo", handler.UploadProfilePhoto, echojwt.WithConfig(jwtMiddlewareConfig))
+}
+
+func initRegionRoute(e *echo.Echo, jwtMiddlewareConfig echojwt.Config) {
+	service := regionService.NewRegionService()
+	handler := regionHandler.NewRegionHandler(service)
+
+	region := e.Group("/api/v1/region", echojwt.WithConfig(jwtMiddlewareConfig))
+	region.GET("/provinces", handler.GetProvinces)
+	region.GET("/regencies/:code", handler.GetRegencies)
+	region.GET("/districts/:code", handler.GetDistricts)
+	region.GET("/villages/:code", handler.GetVillages)
 }
