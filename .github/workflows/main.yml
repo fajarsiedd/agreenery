@@ -31,6 +31,7 @@ jobs:
             - name: create google credentials file
               run: |
                 echo "${{secrets.GOOGLE_CREDENTIALS}} >> google_credentials.json"
+                chmod 600 google_credentials.json
             - name: build docker
               run: docker build -t fajarsdq/agreenery:1.0.0 .
             - name: docker hub login

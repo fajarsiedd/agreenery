@@ -18,6 +18,8 @@ WORKDIR /app
 
 COPY --from=builder /app/main .
 
+COPY google_credentials.json google_credentials.json
+
 COPY .env .env
 
 RUN apk update && apk add --no-cache ca-certificates
