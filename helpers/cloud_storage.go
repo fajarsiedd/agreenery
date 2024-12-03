@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"mime/multipart"
+	"os"
 	"time"
 
 	"cloud.google.com/go/storage"
@@ -18,6 +19,8 @@ type UploaderParams struct {
 }
 
 func UploadFile(params UploaderParams) (string, error) {
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", os.Getenv("GOOGLE_APPLICATION_CREDENTIALS_PATH"))
+
 	ctx := context.Background()
 
 	client, err := storage.NewClient(ctx)
