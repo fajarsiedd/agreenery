@@ -3,10 +3,12 @@ package routes
 import (
 	authHandler "go-agreenery/handlers/auth"
 	regionHandler "go-agreenery/handlers/region"
+	weatherHandler "go-agreenery/handlers/weather"
 	"go-agreenery/middlewares"
 	authRepo "go-agreenery/repositories/auth"
 	authService "go-agreenery/services/auth"
 	regionService "go-agreenery/services/region"
+	weatherService "go-agreenery/services/weather"
 	"os"
 	"time"
 
@@ -54,6 +56,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initAuthRoute(e, db, &jwtConfig, jwtMiddlewareConfig)
 
 	initRegionRoute(e, jwtMiddlewareConfig)
+
+	initWeatherRoute(e, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -85,4 +89,14 @@ func initRegionRoute(e *echo.Echo, jwtMiddlewareConfig echojwt.Config) {
 	region.GET("/regencies/:code", handler.GetRegencies)
 	region.GET("/districts/:code", handler.GetDistricts)
 	region.GET("/villages/:code", handler.GetVillages)
+}
+
+func initWeatherRoute(e *echo.Echo, jwtMiddlewareConfig echojwt.Config) {
+	service := weatherService.NewWeatherService()
+	handler := weatherHandler.NewWeatherHandler(service)
+
+	weather := e.Group("/api/v1/weathers", echojwt.WithConfig(jwtMiddlewareConfig))
+	weather.GET("/current", handler.GetCurrentWeather)
+	weather.GET("/today", handler.GetTodayForecast)
+	weather.GET("/daily", handler.GetDailyForecast)
 }
