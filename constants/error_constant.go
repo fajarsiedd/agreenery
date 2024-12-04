@@ -27,4 +27,10 @@ var (
 	// UPLOADER
 	ErrFileSizeExceedsLimit error = errors.New("file size exceeds 2 Mb limit")
 	ErrOnlyImageAllowed     error = errors.New("only image files are allowed")
+
+	// MAPS
+	ErrGetCoordinatesFailed error = errors.New("no results found for the address")
+
+	// GENERAL
+	ErrMissingQueryParam error = errors.New("missing query param in url")
 )

@@ -14,4 +14,9 @@ const (
 	GetRegenciesSuccess string = "regencies data retreived successfuly"
 	GetDistrictsSuccess string = "districts data retreived successfuly"
 	GetVillagesSuccess  string = "villages data retreived successfuly"
+
+	// WEATHER
+	GetCurrentWeatherSuccess string = "current weather data retreived successfuly"
+	GetTodayWeatherSuccess string = "today's weather data retreived successfuly"
+	GetDailyForecastSuccess  string = "daily weather forecast data retreived successfuly"
 )
