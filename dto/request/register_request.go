@@ -9,13 +9,13 @@ type RegisterRequest struct {
 	Password    string `json:"password" validate:"required"`
 }
 
-func (registerRequest RegisterRequest) ToEntity() entities.User {
+func (r RegisterRequest) ToEntity() entities.User {
 	return entities.User{
-		DisplayName: registerRequest.DisplayName,
-		Phone:       registerRequest.Phone,
+		DisplayName: r.DisplayName,
+		Phone:       r.Phone,
 		Credential: entities.Credential{
-			Email:    registerRequest.Email,
-			Password: registerRequest.Password,
+			Email:    r.Email,
+			Password: r.Password,
 		},
 	}
 }

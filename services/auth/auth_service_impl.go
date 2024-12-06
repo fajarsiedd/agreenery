@@ -24,8 +24,8 @@ func NewAuthService(r auth.AuthRepository, jwtConfig, jwtRefreshConfig *middlewa
 	}
 }
 
-func (service authService) Login(user entities.User) (entities.User, error) {
-	result, err := service.repository.Login(user)
+func (s authService) Login(user entities.User) (entities.User, error) {
+	result, err := s.repository.Login(user)
 	if err != nil {
 		return entities.User{}, err
 	}
@@ -37,12 +37,12 @@ func (service authService) Login(user entities.User) (entities.User, error) {
 		return entities.User{}, constants.ErrIncorrectPassword
 	}
 
-	accessToken, err := service.jwtConfig.GenerateToken(result.ID, string(result.Credential.Role))
+	accessToken, err := s.jwtConfig.GenerateToken(result.ID, string(result.Credential.Role))
 	if err != nil {
 		return entities.User{}, err
 	}
 
-	refreshToken, err := service.jwtRefreshConfig.GenerateRefreshToken(result.ID, string(result.Credential.Role))
+	refreshToken, err := s.jwtRefreshConfig.GenerateRefreshToken(result.ID, string(result.Credential.Role))
 	if err != nil {
 		return entities.User{}, err
 	}
@@ -53,7 +53,7 @@ func (service authService) Login(user entities.User) (entities.User, error) {
 	return result, nil
 }
 
-func (service authService) Register(user entities.User) (entities.User, error) {
+func (s authService) Register(user entities.User) (entities.User, error) {
 	config := &helpers.ArgonConfig{
 		Memory:     64 * 1024,
 		Iterations: 3,
@@ -68,7 +68,7 @@ func (service authService) Register(user entities.User) (entities.User, error) {
 		return entities.User{}, err
 	}
 
-	result, err := service.repository.Register(user)
+	result, err := s.repository.Register(user)
 	if err != nil {
 		return entities.User{}, err
 	}
@@ -76,13 +76,13 @@ func (service authService) Register(user entities.User) (entities.User, error) {
 	return result, nil
 }
 
-func (service authService) GetNewTokens(claims *middlewares.JWTCustomClaims, refreshToken string) (entities.User, error) {
-	newAccessToken, err := service.jwtConfig.GenerateToken(claims.UserID, claims.Role)
+func (s authService) GetNewTokens(claims *middlewares.JWTCustomClaims, refreshToken string) (entities.User, error) {
+	newAccessToken, err := s.jwtConfig.GenerateToken(claims.UserID, claims.Role)
 	if err != nil {
 		return entities.User{}, err
 	}
 
-	newRefreshToken, err := service.jwtRefreshConfig.GenerateRefreshToken(claims.UserID, claims.Role)
+	newRefreshToken, err := s.jwtRefreshConfig.GenerateRefreshToken(claims.UserID, claims.Role)
 	if err != nil {
 		return entities.User{}, err
 	}
@@ -93,16 +93,16 @@ func (service authService) GetNewTokens(claims *middlewares.JWTCustomClaims, ref
 	}, nil
 }
 
-func (service authService) GetProfile(id string) (entities.User, error) {
-	return service.repository.FindUser(id)
+func (s authService) GetProfile(id string) (entities.User, error) {
+	return s.repository.GetUser(id)
 }
 
-func (service authService) UpdateProfile(user entities.User, selectedFields []string) (entities.User, error) {
-	return service.repository.UpdateUser(user, selectedFields)
+func (s authService) UpdateProfile(user entities.User, selectedFields []string) (entities.User, error) {
+	return s.repository.UpdateUser(user, selectedFields)
 }
 
-func (service authService) UploadProfilePhoto(file multipart.File, userID string) (entities.User, error) {
-	user, err := service.repository.FindUser(userID)
+func (s authService) UploadProfilePhoto(file multipart.File, userID string) (entities.User, error) {
+	user, err := s.repository.GetUser(userID)
 	if err != nil {
 		return entities.User{}, err
 	}
@@ -125,7 +125,7 @@ func (service authService) UploadProfilePhoto(file multipart.File, userID string
 
 	user.Photo = url
 
-	result, err := service.repository.UpdateUser(user, []string{"photo"})
+	result, err := s.repository.UpdateUser(user, []string{"photo"})
 	if err != nil {
 		return entities.User{}, err
 	}

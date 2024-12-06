@@ -13,9 +13,9 @@ type ProfileResponse struct {
 	Email       string `json:"email"`
 }
 
-func (loginResponse ProfileResponse) FromEntity(user entities.User) ProfileResponse {
+func (r ProfileResponse) FromEntity(user entities.User) ProfileResponse {
 	return ProfileResponse{
-		Base:        loginResponse.Base.FromEntity(user.Base),
+		Base:        r.Base.FromEntity(user.Base),
 		DisplayName: user.DisplayName,
 		Phone:       user.Phone,
 		Photo:       user.Photo,

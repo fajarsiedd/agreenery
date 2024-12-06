@@ -15,25 +15,25 @@ type Base struct {
 	DeletedAt gorm.DeletedAt `gorm:"index"`
 }
 
-func (base *Base) BeforeCreate(tx *gorm.DB) (err error) {
-	base.ID = uuid.New().String()
+func (b *Base) BeforeCreate(tx *gorm.DB) (err error) {
+	b.ID = uuid.New().String()
 	return
 }
 
-func (Base) FromEntity(baseEntity entities.Base) Base {
+func (b Base) FromEntity(base entities.Base) Base {
 	return Base{
-		ID:        baseEntity.ID,
-		CreatedAt: baseEntity.CreatedAt,
-		UpdatedAt: baseEntity.UpdatedAt,
-		DeletedAt: baseEntity.DeletedAt,
-	}
-}
-
-func (base Base) ToEntity() entities.Base {
-	return entities.Base{
 		ID:        base.ID,
 		CreatedAt: base.CreatedAt,
 		UpdatedAt: base.UpdatedAt,
 		DeletedAt: base.DeletedAt,
+	}
+}
+
+func (b Base) ToEntity() entities.Base {
+	return entities.Base{
+		ID:        b.ID,
+		CreatedAt: b.CreatedAt,
+		UpdatedAt: b.UpdatedAt,
+		DeletedAt: b.DeletedAt,
 	}
 }

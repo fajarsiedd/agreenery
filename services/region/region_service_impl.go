@@ -16,7 +16,7 @@ func NewRegionService() *regionService {
 	return &regionService{}
 }
 
-func (service regionService) GetProvinces() ([]entities.Region, error) {
+func (s regionService) GetProvinces() ([]entities.Region, error) {
 	var err error
 	var client = &http.Client{}
 
@@ -40,7 +40,7 @@ func (service regionService) GetProvinces() ([]entities.Region, error) {
 	return res.Data, nil
 }
 
-func (service regionService) GetRegencies(provinceCode string) ([]entities.Region, error) {
+func (s regionService) GetRegencies(provinceCode string) ([]entities.Region, error) {
 	var err error
 	var client = &http.Client{}
 
@@ -64,7 +64,7 @@ func (service regionService) GetRegencies(provinceCode string) ([]entities.Regio
 	return res.Data, nil
 }
 
-func (service regionService) GetDistricts(regencyCode string) ([]entities.Region, error) {
+func (s regionService) GetDistricts(regencyCode string) ([]entities.Region, error) {
 	var err error
 	var client = &http.Client{}
 
@@ -88,7 +88,7 @@ func (service regionService) GetDistricts(regencyCode string) ([]entities.Region
 	return res.Data, nil
 }
 
-func (service regionService) GetVillages(districtCode string) ([]entities.Region, error) {
+func (s regionService) GetVillages(districtCode string) ([]entities.Region, error) {
 	var err error
 	var client = &http.Client{}
 

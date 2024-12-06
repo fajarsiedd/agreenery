@@ -19,9 +19,9 @@ type WeatherResponse struct {
 
 type ListWeatherResponse []WeatherResponse
 
-func (weather WeatherResponse) FromEntity(weatherEntity entities.Weather) WeatherResponse {
+func (r WeatherResponse) FromEntity(weather entities.Weather) WeatherResponse {
 	var mainTxt string
-	switch weatherEntity.Weather[0].Main {
+	switch weather.Weather[0].Main {
 	case "Thunderstorm":
 		mainTxt = "Hujan Badai"
 	case "Drizzle":
@@ -38,25 +38,25 @@ func (weather WeatherResponse) FromEntity(weatherEntity entities.Weather) Weathe
 
 	return WeatherResponse{
 		Main:        mainTxt,
-		Description: weatherEntity.Weather[0].Description,
-		Temp:        toFixed(weatherEntity.Main.Temp-273.15, 1),
-		TempMin:     toFixed(weatherEntity.Main.TempMin-273.15, 1),
-		TempMax:     toFixed(weatherEntity.Main.TempMax-273.15, 1),
-		Humidity:    weatherEntity.Main.Humidity,
-		Icon:        "http://openweathermap.org/img/wn/" + weatherEntity.Weather[0].Icon + "@2x.png",
-		WindSpeed:   weatherEntity.Wind.Speed,
-		DateTime:    weatherEntity.DtTxt,
+		Description: weather.Weather[0].Description,
+		Temp:        toFixed(weather.Main.Temp-273.15, 1),
+		TempMin:     toFixed(weather.Main.TempMin-273.15, 1),
+		TempMax:     toFixed(weather.Main.TempMax-273.15, 1),
+		Humidity:    weather.Main.Humidity,
+		Icon:        "http://openweathermap.org/img/wn/" + weather.Weather[0].Icon + "@2x.png",
+		WindSpeed:   weather.Wind.Speed,
+		DateTime:    weather.DtTxt,
 	}
 }
 
-func (listWeather ListWeatherResponse) FromListEntity(weatherEntities []entities.Weather) ListWeatherResponse {
-	var weathers ListWeatherResponse
+func (lr ListWeatherResponse) FromListEntity(weathers []entities.Weather) ListWeatherResponse {
+	var data ListWeatherResponse
 
-	for _, v := range weatherEntities {
-		weathers = append(weathers, WeatherResponse{}.FromEntity(v))
+	for _, v := range weathers {
+		data = append(data, WeatherResponse{}.FromEntity(v))
 	}
 
-	return weathers
+	return data
 }
 
 func round(num float64) int {

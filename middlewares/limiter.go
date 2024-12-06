@@ -14,11 +14,11 @@ type RateLimiterConfig struct {
 	ExpiresIn time.Duration
 }
 
-func (rateLimiterConfig *RateLimiterConfig) Init() echo.MiddlewareFunc {
+func (c *RateLimiterConfig) Init() echo.MiddlewareFunc {
 	config := middleware.RateLimiterMemoryStoreConfig{
-		Rate:      rateLimiterConfig.Rate,
-		Burst:     rateLimiterConfig.Burst,
-		ExpiresIn: rateLimiterConfig.ExpiresIn,
+		Rate:      c.Rate,
+		Burst:     c.Burst,
+		ExpiresIn: c.ExpiresIn,
 	}
 
 	memoryStore := middleware.NewRateLimiterMemoryStoreWithConfig(config)

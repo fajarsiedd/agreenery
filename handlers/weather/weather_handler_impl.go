@@ -15,13 +15,13 @@ type weatherHandler struct {
 	service weather.WeatherService
 }
 
-func NewWeatherHandler(service weather.WeatherService) *weatherHandler {
+func NewWeatherHandler(s weather.WeatherService) *weatherHandler {
 	return &weatherHandler{
-		service: service,
+		service: s,
 	}
 }
 
-func (handler weatherHandler) GetCurrentWeather(c echo.Context) error {
+func (h weatherHandler) GetCurrentWeather(c echo.Context) error {
 	lat := c.QueryParam("lat")
 	lon := c.QueryParam("lon")
 	region := c.QueryParam("region")
@@ -35,7 +35,7 @@ func (handler weatherHandler) GetCurrentWeather(c echo.Context) error {
 		lon = fmt.Sprintf("%f", lng)
 	}
 
-	currWeather, err := handler.service.GetCurrentWeather(lat, lon)
+	currWeather, err := h.service.GetCurrentWeather(lat, lon)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}
@@ -43,7 +43,7 @@ func (handler weatherHandler) GetCurrentWeather(c echo.Context) error {
 	return base.SuccessResponse(c, constants.GetCurrentWeatherSuccess, response.WeatherResponse{}.FromEntity(currWeather))
 }
 
-func (handler weatherHandler) GetTodayForecast(c echo.Context) error {
+func (h weatherHandler) GetTodayForecast(c echo.Context) error {
 	lat := c.QueryParam("lat")
 	lon := c.QueryParam("lon")
 	region := c.QueryParam("region")
@@ -57,7 +57,7 @@ func (handler weatherHandler) GetTodayForecast(c echo.Context) error {
 		lon = fmt.Sprintf("%f", lng)
 	}
 
-	forecasts, err := handler.service.GetTodayForecast(lat, lon)
+	forecasts, err := h.service.GetTodayForecast(lat, lon)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}
@@ -65,7 +65,7 @@ func (handler weatherHandler) GetTodayForecast(c echo.Context) error {
 	return base.SuccessResponse(c, constants.GetTodayWeatherSuccess, response.ListWeatherResponse{}.FromListEntity(forecasts))
 }
 
-func (handler weatherHandler) GetDailyForecast(c echo.Context) error {
+func (h weatherHandler) GetDailyForecast(c echo.Context) error {
 	lat := c.QueryParam("lat")
 	lon := c.QueryParam("lon")
 	region := c.QueryParam("region")
@@ -79,7 +79,7 @@ func (handler weatherHandler) GetDailyForecast(c echo.Context) error {
 		lon = fmt.Sprintf("%f", lng)
 	}
 
-	forecasts, err := handler.service.GetDailyForecast(lat, lon)
+	forecasts, err := h.service.GetDailyForecast(lat, lon)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}

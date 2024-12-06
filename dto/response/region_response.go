@@ -10,20 +10,20 @@ type RegionResponse struct {
 
 type ListRegionResponse []RegionResponse
 
-func (regionResponse RegionResponse) FromEntity(regionEntity entities.Region) RegionResponse {
+func (r RegionResponse) FromEntity(region entities.Region) RegionResponse {
 	return RegionResponse{
-		Code:       regionEntity.Code,
-		Name:       regionEntity.Name,
-		PostalCode: regionEntity.PostalCode,
+		Code:       region.Code,
+		Name:       region.Name,
+		PostalCode: region.PostalCode,
 	}
 }
 
-func (listRegionResponse ListRegionResponse) FromListEntity(regionEntities []entities.Region) ListRegionResponse {
-	regions := []RegionResponse{}
+func (r ListRegionResponse) FromListEntity(regions []entities.Region) ListRegionResponse {
+	data := ListRegionResponse{}
 
-	for _, v := range regionEntities {
-		regions = append(regions, RegionResponse{}.FromEntity(v))
+	for _, v := range regions {
+		data = append(data, RegionResponse{}.FromEntity(v))
 	}
 
-	return regions
+	return data
 }

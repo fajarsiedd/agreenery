@@ -12,20 +12,20 @@ type Credential struct {
 	Role     enums.Role `gorm:"type:enum('user', 'admin');column:role;default:'user'"`
 }
 
-func (credential Credential) FromEntity(credentialEntity entities.Credential) Credential {
+func (c Credential) FromEntity(credentialEntity entities.Credential) Credential {
 	return Credential{
-		Base:     credential.Base.FromEntity(credentialEntity.Base),
+		Base:     c.Base.FromEntity(credentialEntity.Base),
 		Email:    credentialEntity.Email,
 		Password: credentialEntity.Password,
 		Role:     credentialEntity.Role,
 	}
 }
 
-func (credential Credential) ToEntity() entities.Credential {
+func (c Credential) ToEntity() entities.Credential {
 	return entities.Credential{
-		Base:     credential.Base.ToEntity(),
-		Email:    credential.Email,
-		Password: credential.Password,
-		Role:     credential.Role,
+		Base:     c.Base.ToEntity(),
+		Email:    c.Email,
+		Password: c.Password,
+		Role:     c.Role,
 	}
 }

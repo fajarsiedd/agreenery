@@ -25,5 +25,5 @@ const (
 	GetCategorySuccess    string = "category retreived successfully"
 	UpdateCategorySuccess string = "category updated successfully"
 	DeleteCategorySuccess string = "category deleted successfully"
-	CreateCategorySuccess string = "new category added successfully"
+	CreateCategorySuccess string = "new category created successfully"
 )

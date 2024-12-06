@@ -7,7 +7,7 @@ type RefreshTokenResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-func (tokenResponse RefreshTokenResponse) FromEntity(user entities.User) RefreshTokenResponse {
+func (r RefreshTokenResponse) FromEntity(user entities.User) RefreshTokenResponse {
 	return RefreshTokenResponse{
 		AccessToken:  user.AccessToken,
 		RefreshToken: user.RefreshToken,

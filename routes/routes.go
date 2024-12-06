@@ -79,7 +79,7 @@ func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, 
 	auth := e.Group("/api/v1/auth")
 	auth.POST("/login", handler.Login)
 	auth.POST("/register", handler.Register)
-	auth.POST("/refresh-token", handler.GetNewTokens, echojwt.WithConfig(jwtRefreshMiddlewareConfig))
+	auth.POST("/refresh", handler.GetNewTokens, echojwt.WithConfig(jwtRefreshMiddlewareConfig))
 	auth.GET("/me", handler.GetProfile, echojwt.WithConfig(jwtMiddlewareConfig))
 	auth.PUT("/me", handler.UpdateProfile, echojwt.WithConfig(jwtMiddlewareConfig))
 	auth.POST("/me/photo", handler.UploadProfilePhoto, echojwt.WithConfig(jwtMiddlewareConfig))
@@ -89,7 +89,7 @@ func initRegionRoute(e *echo.Echo, jwtMiddlewareConfig echojwt.Config) {
 	service := regionService.NewRegionService()
 	handler := regionHandler.NewRegionHandler(service)
 
-	region := e.Group("/api/v1/region", echojwt.WithConfig(jwtMiddlewareConfig))
+	region := e.Group("/api/v1/regions", echojwt.WithConfig(jwtMiddlewareConfig))
 	region.GET("/provinces", handler.GetProvinces)
 	region.GET("/regencies/:code", handler.GetRegencies)
 	region.GET("/districts/:code", handler.GetDistricts)

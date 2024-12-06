@@ -18,15 +18,15 @@ func NewAuthRepository(db *gorm.DB) *authRepository {
 	}
 }
 
-func (repository *authRepository) Login(user entities.User) (entities.User, error) {
+func (r *authRepository) Login(user entities.User) (entities.User, error) {
 	userModel := models.User{}.FromEntity(user)
 
-	err := repository.db.First(&userModel.Credential, "email = ?", userModel.Credential.Email).Error
+	err := r.db.First(&userModel.Credential, "email = ?", userModel.Credential.Email).Error
 	if err != nil {
 		return entities.User{}, constants.ErrIncorrectEmail
 	}
 
-	err = repository.db.First(&userModel, "credential_id = ?", userModel.Credential.Base.ID).Error
+	err = r.db.First(&userModel, "credential_id = ?", userModel.Credential.Base.ID).Error
 	if err != nil {
 		return entities.User{}, constants.ErrUserNotFound
 	}
@@ -34,10 +34,10 @@ func (repository *authRepository) Login(user entities.User) (entities.User, erro
 	return userModel.ToEntity(), nil
 }
 
-func (repository authRepository) Register(user entities.User) (entities.User, error) {
+func (r authRepository) Register(user entities.User) (entities.User, error) {
 	userModel := models.User{}.FromEntity(user)
 
-	err := repository.db.Transaction(func(tx *gorm.DB) error {
+	err := r.db.Transaction(func(tx *gorm.DB) error {
 		if err := tx.Create(&userModel.Credential).Error; err != nil {
 			if err == gorm.ErrDuplicatedKey {
 				return constants.ErrDuplicateEmail
@@ -65,20 +65,20 @@ func (repository authRepository) Register(user entities.User) (entities.User, er
 	return userModel.ToEntity(), nil
 }
 
-func (repository authRepository) FindUser(id string) (entities.User, error) {
+func (r authRepository) GetUser(id string) (entities.User, error) {
 	userModel := models.User{}
 
-	if err := repository.db.Preload("Credential").First(&userModel, &id).Error; err != nil {
+	if err := r.db.Preload("Credential").First(&userModel, &id).Error; err != nil {
 		return entities.User{}, constants.ErrUserNotFound
 	}
 
 	return userModel.ToEntity(), nil
 }
 
-func (repository authRepository) UpdateUser(user entities.User, selectedFields []string) (entities.User, error) {
+func (r authRepository) UpdateUser(user entities.User, selectedFields []string) (entities.User, error) {
 	userModel := models.User{}.FromEntity(user)
 
-	err := repository.db.Transaction(func(tx *gorm.DB) error {
+	err := r.db.Transaction(func(tx *gorm.DB) error {
 		userData := models.User{}
 		if err := tx.Preload("Credential").First(&userData, &user.ID).Error; err != nil {
 			return constants.ErrUserNotFound

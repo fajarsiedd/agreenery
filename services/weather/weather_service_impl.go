@@ -15,7 +15,7 @@ type weatherService struct{}
 func NewWeatherService() *weatherService {
 	return &weatherService{}
 }
-func (service weatherService) GetCurrentWeather(lat, lon string) (entities.Weather, error) {
+func (s weatherService) GetCurrentWeather(lat, lon string) (entities.Weather, error) {
 	var err error
 	var client = &http.Client{}
 	var appID string = os.Getenv("OPEN_WEATHER_API_KEY")
@@ -41,7 +41,7 @@ func (service weatherService) GetCurrentWeather(lat, lon string) (entities.Weath
 	return res, nil
 }
 
-func (service weatherService) GetTodayForecast(lat, lon string) ([]entities.Weather, error) {
+func (s weatherService) GetTodayForecast(lat, lon string) ([]entities.Weather, error) {
 	var err error
 	var client = &http.Client{}
 	var appID string = os.Getenv("OPEN_WEATHER_API_KEY")
@@ -80,7 +80,7 @@ func (service weatherService) GetTodayForecast(lat, lon string) ([]entities.Weat
 	return filterredWeathers, nil
 }
 
-func (service weatherService) GetDailyForecast(lat, lon string) ([]entities.Weather, error) {
+func (s weatherService) GetDailyForecast(lat, lon string) ([]entities.Weather, error) {
 	var err error
 	var client = &http.Client{}
 	var appID string = os.Getenv("OPEN_WEATHER_API_KEY")

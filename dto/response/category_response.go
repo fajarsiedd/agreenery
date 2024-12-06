@@ -14,20 +14,20 @@ type CategoryResponse struct {
 
 type ListCategoryResponse []CategoryResponse
 
-func (c CategoryResponse) FromEntity(category entities.Category) CategoryResponse {
+func (r CategoryResponse) FromEntity(category entities.Category) CategoryResponse {
 	return CategoryResponse{
-		Base: c.Base.FromEntity(category.Base),
+		Base: r.Base.FromEntity(category.Base),
 		Name: category.Name,
 		Type: category.Type,
 	}
 }
 
-func (lc ListCategoryResponse) FromListEntity(categories []entities.Category) ListCategoryResponse {
-	listCategoryRes := ListCategoryResponse{}
+func (lr ListCategoryResponse) FromListEntity(categories []entities.Category) ListCategoryResponse {
+	data := ListCategoryResponse{}
 
 	for _, v := range categories {
-		listCategoryRes = append(listCategoryRes, CategoryResponse{}.FromEntity(v))
+		data = append(data, CategoryResponse{}.FromEntity(v))
 	}
 
-	return listCategoryRes
+	return data
 }

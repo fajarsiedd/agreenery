@@ -13,14 +13,14 @@ type regionHandler struct {
 	service region.RegionService
 }
 
-func NewRegionHandler(service region.RegionService) *regionHandler {
+func NewRegionHandler(s region.RegionService) *regionHandler {
 	return &regionHandler{
-		service: service,
+		service: s,
 	}
 }
 
-func (handler regionHandler) GetProvinces(c echo.Context) error {
-	provinces, err := handler.service.GetProvinces()
+func (h regionHandler) GetProvinces(c echo.Context) error {
+	provinces, err := h.service.GetProvinces()
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}
@@ -28,9 +28,9 @@ func (handler regionHandler) GetProvinces(c echo.Context) error {
 	return base.SuccessResponse(c, constants.GetProvincesSuccess, response.ListRegionResponse{}.FromListEntity(provinces))
 }
 
-func (handler regionHandler) GetRegencies(c echo.Context) error {
+func (h regionHandler) GetRegencies(c echo.Context) error {
 	provinceCode := c.Param("code")
-	regencies, err := handler.service.GetRegencies(provinceCode)
+	regencies, err := h.service.GetRegencies(provinceCode)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}
@@ -38,10 +38,10 @@ func (handler regionHandler) GetRegencies(c echo.Context) error {
 	return base.SuccessResponse(c, constants.GetRegenciesSuccess, response.ListRegionResponse{}.FromListEntity(regencies))
 }
 
-func (handler regionHandler) GetDistricts(c echo.Context) error {
+func (h regionHandler) GetDistricts(c echo.Context) error {
 	regencyCode := c.Param("code")
 
-	districts, err := handler.service.GetDistricts(regencyCode)
+	districts, err := h.service.GetDistricts(regencyCode)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}
@@ -49,10 +49,10 @@ func (handler regionHandler) GetDistricts(c echo.Context) error {
 	return base.SuccessResponse(c, constants.GetDistrictsSuccess, response.ListRegionResponse{}.FromListEntity(districts))
 }
 
-func (handler regionHandler) GetVillages(c echo.Context) error {
+func (h regionHandler) GetVillages(c echo.Context) error {
 	districtCode := c.Param("code")
 
-	villages, err := handler.service.GetVillages(districtCode)
+	villages, err := h.service.GetVillages(districtCode)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}

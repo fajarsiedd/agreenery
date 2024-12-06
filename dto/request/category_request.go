@@ -11,10 +11,10 @@ type CategoryRequest struct {
 	Type enums.CategoryType `json:"type" validate:"required,oneof=article post plant"`
 }
 
-func (c CategoryRequest) ToEntity() entities.Category {
+func (r CategoryRequest) ToEntity() entities.Category {
 	return entities.Category{
-		Base: entities.Base{ID: c.ID},
-		Name: c.Name,
-		Type: c.Type,
+		Base: entities.Base{ID: r.ID},
+		Name: r.Name,
+		Type: r.Type,
 	}
 }

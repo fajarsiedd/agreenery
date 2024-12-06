@@ -13,24 +13,24 @@ type User struct {
 	Credential   Credential `gorm:"foreignKey:CredentialID;references:ID"`
 }
 
-func (user User) FromEntity(userEntity entities.User) User {
+func (u User) FromEntity(user entities.User) User {
 	return User{
-		Base:         user.Base.FromEntity(userEntity.Base),
-		DisplayName:  userEntity.DisplayName,
-		Phone:        userEntity.Phone,
-		Photo:        userEntity.Photo,
-		CredentialID: userEntity.CredentialID,
-		Credential:   user.Credential.FromEntity(userEntity.Credential),
-	}
-}
-
-func (user User) ToEntity() entities.User {
-	return entities.User{
-		Base:         user.Base.ToEntity(),
+		Base:         u.Base.FromEntity(user.Base),
 		DisplayName:  user.DisplayName,
 		Phone:        user.Phone,
 		Photo:        user.Photo,
 		CredentialID: user.CredentialID,
-		Credential:   user.Credential.ToEntity(),
+		Credential:   u.Credential.FromEntity(user.Credential),
+	}
+}
+
+func (u User) ToEntity() entities.User {
+	return entities.User{
+		Base:         u.Base.ToEntity(),
+		DisplayName:  u.DisplayName,
+		Phone:        u.Phone,
+		Photo:        u.Photo,
+		CredentialID: u.CredentialID,
+		Credential:   u.Credential.ToEntity(),
 	}
 }

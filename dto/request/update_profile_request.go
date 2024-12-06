@@ -13,24 +13,24 @@ type UpdateProfileRequest struct {
 	Photo       string `json:"photo,omitempty"`
 }
 
-func (updateProfileRequest UpdateProfileRequest) ToEntity() entities.User {
+func (r UpdateProfileRequest) ToEntity() entities.User {
 	return entities.User{
 		Base: entities.Base{
-			ID: updateProfileRequest.ID,
+			ID: r.ID,
 		},
-		DisplayName: updateProfileRequest.DisplayName,
-		Phone:       updateProfileRequest.Phone,
-		Photo:       updateProfileRequest.Photo,
+		DisplayName: r.DisplayName,
+		Phone:       r.Phone,
+		Photo:       r.Photo,
 		Credential: entities.Credential{
-			Email: updateProfileRequest.Email,
+			Email: r.Email,
 		},
 	}
 }
 
-func (updateProfileRequest UpdateProfileRequest) ToCleanFields() []string {
+func (r UpdateProfileRequest) ToCleanFields() []string {
 	var fields []string
 	var inInterface map[string]interface{}
-	inrec, _ := json.Marshal(&updateProfileRequest)
+	inrec, _ := json.Marshal(&r)
 	json.Unmarshal(inrec, &inInterface)
 
 	for field, val := range inInterface {

@@ -22,12 +22,12 @@ type JWTConfig struct {
 	ExpiresDuration int
 }
 
-func (jwtConfig *JWTConfig) NewJWTConfig() echojwt.Config {
+func (c *JWTConfig) NewJWTConfig() echojwt.Config {
 	return echojwt.Config{
 		NewClaimsFunc: func(c echo.Context) jwt.Claims {
 			return new(JWTCustomClaims)
 		},
-		SigningKey: []byte(jwtConfig.SecretKey),
+		SigningKey: []byte(c.SecretKey),
 		ErrorHandler: func(c echo.Context, err error) error {
 			if err != nil {
 				return base.ErrorResponse(c, err)
@@ -38,8 +38,8 @@ func (jwtConfig *JWTConfig) NewJWTConfig() echojwt.Config {
 	}
 }
 
-func (jwtConfig *JWTConfig) GenerateToken(userID, role string) (string, error) {
-	expire := jwt.NewNumericDate(time.Now().Local().Add(time.Hour * time.Duration(int64(jwtConfig.ExpiresDuration))))
+func (c *JWTConfig) GenerateToken(userID, role string) (string, error) {
+	expire := jwt.NewNumericDate(time.Now().Local().Add(time.Hour * time.Duration(int64(c.ExpiresDuration))))
 
 	claims := &JWTCustomClaims{
 		userID,
@@ -51,7 +51,7 @@ func (jwtConfig *JWTConfig) GenerateToken(userID, role string) (string, error) {
 
 	rawToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	token, err := rawToken.SignedString([]byte(jwtConfig.SecretKey))
+	token, err := rawToken.SignedString([]byte(c.SecretKey))
 	if err != nil {
 		return "", err
 	}
@@ -59,8 +59,8 @@ func (jwtConfig *JWTConfig) GenerateToken(userID, role string) (string, error) {
 	return token, nil
 }
 
-func (jwtConfig *JWTConfig) GenerateRefreshToken(userID, role string) (string, error) {
-	expire := jwt.NewNumericDate(time.Now().Local().Add(time.Hour * time.Duration(int64(jwtConfig.ExpiresDuration))))
+func (c *JWTConfig) GenerateRefreshToken(userID, role string) (string, error) {
+	expire := jwt.NewNumericDate(time.Now().Local().Add(time.Hour * time.Duration(int64(c.ExpiresDuration))))
 
 	claims := &JWTCustomClaims{
 		userID,
@@ -73,7 +73,7 @@ func (jwtConfig *JWTConfig) GenerateRefreshToken(userID, role string) (string, e
 
 	rawToken := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 
-	token, err := rawToken.SignedString([]byte(jwtConfig.SecretKey))
+	token, err := rawToken.SignedString([]byte(c.SecretKey))
 	if err != nil {
 		return "", err
 	}

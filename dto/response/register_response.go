@@ -13,9 +13,9 @@ type RegisterResponse struct {
 	Email       string `json:"email"`
 }
 
-func (registerResponse RegisterResponse) FromEntity(user entities.User) RegisterResponse {
+func (r RegisterResponse) FromEntity(user entities.User) RegisterResponse {
 	return RegisterResponse{
-		Base:        registerResponse.Base.FromEntity(user.Base),
+		Base:        r.Base.FromEntity(user.Base),
 		DisplayName: user.DisplayName,
 		Phone:       user.Phone,
 		Photo:       user.Photo,

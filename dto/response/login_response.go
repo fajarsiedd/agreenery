@@ -15,9 +15,9 @@ type LoginResponse struct {
 	RefreshToken string `json:"refresh_token"`
 }
 
-func (loginResponse LoginResponse) FromEntity(user entities.User) LoginResponse {
+func (r LoginResponse) FromEntity(user entities.User) LoginResponse {
 	return LoginResponse{
-		Base:         loginResponse.Base.FromEntity(user.Base),
+		Base:         r.Base.FromEntity(user.Base),
 		DisplayName:  user.DisplayName,
 		Phone:        user.Phone,
 		Photo:        user.Photo,

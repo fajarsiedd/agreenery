@@ -7,11 +7,11 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
-func (loginRequest LoginRequest) ToEntity() entities.User {
+func (r LoginRequest) ToEntity() entities.User {
 	return entities.User{
 		Credential: entities.Credential{
-			Email:    loginRequest.Email,
-			Password: loginRequest.Password,
+			Email:    r.Email,
+			Password: r.Password,
 		},
 	}
 }
