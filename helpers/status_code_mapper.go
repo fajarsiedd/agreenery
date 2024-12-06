@@ -8,7 +8,7 @@ import (
 
 func GetStatusCodeBySuccessMessage(msg string) int {
 	switch msg {
-	case c.RegisterSuccess:
+	case c.RegisterSuccess, c.CreateCategorySuccess:
 		return http.StatusCreated
 	default:
 		return http.StatusOK

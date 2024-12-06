@@ -5,18 +5,25 @@ const (
 	LoginSuccess              string = "login success"
 	RegisterSuccess           string = "user registered successfully"
 	GenerateTokenSuccess      string = "new tokens generated successfully"
-	GetProfileSuccess         string = "profile data retreived successfully"
+	GetProfileSuccess         string = "profile retreived successfully"
 	UpdateProfileSuccess      string = "profile updated successfully"
 	UploadProfilePhotoSuccess string = "profile photo uploaded successfully"
 
 	// REGION
-	GetProvincesSuccess string = "provinces data retreived successfuly"
-	GetRegenciesSuccess string = "regencies data retreived successfuly"
-	GetDistrictsSuccess string = "districts data retreived successfuly"
-	GetVillagesSuccess  string = "villages data retreived successfuly"
+	GetProvincesSuccess string = "provinces retreived successfully"
+	GetRegenciesSuccess string = "regencies retreived successfully"
+	GetDistrictsSuccess string = "districts retreived successfully"
+	GetVillagesSuccess  string = "villages retreived successfully"
 
 	// WEATHER
-	GetCurrentWeatherSuccess string = "current weather data retreived successfuly"
-	GetTodayWeatherSuccess string = "today's weather data retreived successfuly"
-	GetDailyForecastSuccess  string = "daily weather forecast data retreived successfuly"
+	GetCurrentWeatherSuccess string = "current weather retreived successfully"
+	GetTodayWeatherSuccess   string = "today's weather retreived successfully"
+	GetDailyForecastSuccess  string = "daily weather forecast retreived successfully"
+
+	// CATEGORY
+	GetCategoriesSuccess  string = "categories retreived successfully"
+	GetCategorySuccess    string = "category retreived successfully"
+	UpdateCategorySuccess string = "category updated successfully"
+	DeleteCategorySuccess string = "category deleted successfully"
+	CreateCategorySuccess string = "new category added successfully"
 )
