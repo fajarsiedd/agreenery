@@ -10,6 +10,7 @@ var (
 	// VALIDATOR
 	ErrFieldRequired error = errors.New("field is required")
 	ErrInvalidFormat error = errors.New("format is invalid")
+	ErrFieldInvalid  error = errors.New("field is invalid")
 
 	// AUTH
 	ErrInvalidToken      error = errors.New("token is invalid")

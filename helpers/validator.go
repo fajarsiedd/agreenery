@@ -26,5 +26,5 @@ func msgForTag(tag string) string {
 	case "email":
 		return constants.ErrInvalidFormat.Error()
 	}
-	return ""
+	return constants.ErrFieldInvalid.Error()
 }

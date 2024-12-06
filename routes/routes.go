@@ -2,11 +2,14 @@ package routes
 
 import (
 	authHandler "go-agreenery/handlers/auth"
+	categoryHandler "go-agreenery/handlers/category"
 	regionHandler "go-agreenery/handlers/region"
 	weatherHandler "go-agreenery/handlers/weather"
 	"go-agreenery/middlewares"
 	authRepo "go-agreenery/repositories/auth"
+	categoryRepo "go-agreenery/repositories/category"
 	authService "go-agreenery/services/auth"
+	categoryService "go-agreenery/services/category"
 	regionService "go-agreenery/services/region"
 	weatherService "go-agreenery/services/weather"
 	"os"
@@ -58,6 +61,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initRegionRoute(e, jwtMiddlewareConfig)
 
 	initWeatherRoute(e, jwtMiddlewareConfig)
+
+	initCategoryRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -99,4 +104,17 @@ func initWeatherRoute(e *echo.Echo, jwtMiddlewareConfig echojwt.Config) {
 	weather.GET("/current", handler.GetCurrentWeather)
 	weather.GET("/today", handler.GetTodayForecast)
 	weather.GET("/daily", handler.GetDailyForecast)
+}
+
+func initCategoryRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := categoryRepo.NewCategoryRepository(db)
+	service := categoryService.NewCategoryService(repository)
+	handler := categoryHandler.NewCategoryHandler(service)
+
+	category := e.Group("/api/v1/categories", echojwt.WithConfig(jwtMiddlewareConfig))
+	category.POST("", handler.CreateCategory)
+	category.GET("", handler.GetCategories)
+	category.GET("/:id", handler.GetCategory)
+	category.PUT("/:id", handler.UpdateCategory)
+	category.DELETE("/:id", handler.DeleteCategory)
 }

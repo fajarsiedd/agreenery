@@ -55,14 +55,20 @@ func GetFilter(c echo.Context) (entities.Filter, error) {
 		}
 	}
 
+	category := c.QueryParam("category")
+
+	categoryType := c.QueryParam("category_type")
+
 	params := entities.Filter{
-		Page:      page,
-		Limit:     limit,
-		Search:    search,
-		Sort:      sort,
-		SortBy:    sortBy,
-		StartDate: startDate,
-		EndDate:   endDate,
+		Page:         page,
+		Limit:        limit,
+		Search:       search,
+		Sort:         sort,
+		SortBy:       sortBy,
+		StartDate:    startDate,
+		EndDate:      endDate,
+		Category:     category,
+		CategoryType: categoryType,
 	}
 
 	return params, nil
