@@ -7,8 +7,9 @@ import (
 
 type Category struct {
 	Base
-	Name string
-	Type enums.CategoryType `gorm:"type:enum('article','plant','post')"`
+	Name   string
+	Type   enums.CategoryType `gorm:"type:enum('article','plant','post')"`
+	Plants []Plant
 }
 
 type ListCategory []Category

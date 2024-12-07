@@ -26,4 +26,25 @@ const (
 	UpdateCategorySuccess string = "category updated successfully"
 	DeleteCategorySuccess string = "category deleted successfully"
 	CreateCategorySuccess string = "new category created successfully"
+
+	// PLANT
+	GetPlantsSuccess   string = "plants retreived successfully"
+	GetPlantSuccess    string = "plant retreived successfully"
+	UpdatePlantSuccess string = "plant updated successfully"
+	DeletePlantSuccess string = "plant deleted successfully"
+	CreatePlantSuccess string = "new plant created successfully"
+
+	// STEP
+	GetStepsSuccess   string = "steps retreived successfully"
+	GetStepSuccess    string = "step retreived successfully"
+	UpdateStepSuccess string = "step updated successfully"
+	DeleteStepSuccess string = "step deleted successfully"
+	CreateStepSuccess string = "new step created successfully"
+
+	// USER PLANT
+	GetUserPlantsSuccess     string = "user plants retreived successfully"
+	GetUserPlantSuccess      string = "user plant retreived successfully"
+	AddUserPlantSuccess      string = "plant added successfully"
+	MarkCompleteStepSuccess  string = "step marked as complete successfully"
+	MarkCompletePlantSuccess string = "plant care is completed successfully"
 )

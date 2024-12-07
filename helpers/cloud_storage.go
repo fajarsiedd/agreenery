@@ -56,3 +56,28 @@ func UploadFile(params UploaderParams) (string, error) {
 
 	return url, nil
 }
+
+func DeleteFile(object string) error {
+	os.Setenv("GOOGLE_APPLICATION_CREDENTIALS", os.Getenv("GOOGLE_APPLICATION_CREDENTIALS_PATH"))
+
+	ctx := context.Background()
+
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		log.Fatalf("Failed to create client: %v", err)
+	}
+	defer client.Close()
+
+	bucketName := "agreenery"
+
+	bucket := client.Bucket(bucketName)
+
+	ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+	defer cancel()
+
+	if err := bucket.Object("uploads/" + object).Delete(ctx); err != nil {
+		return err
+	}
+
+	return nil
+}
