@@ -92,3 +92,23 @@ func GetCurrentToken(c echo.Context) (*JWTCustomClaims, string, error) {
 
 	return claims, user.Raw, nil
 }
+
+func AdminOnly() echo.MiddlewareFunc {
+	return func(next echo.HandlerFunc) echo.HandlerFunc {
+		return func(c echo.Context) error {
+			user := c.Get("user").(*jwt.Token)
+
+			if user == nil {
+				return base.ErrorResponse(c, constants.ErrInvalidToken)
+			}
+
+			claims := user.Claims.(*JWTCustomClaims)
+
+			if claims.Role == "admin" {
+				return next(c)
+			}
+
+			return base.ErrorResponse(c, constants.ErrAccessNotAllowed)
+		}
+	}
+}

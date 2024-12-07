@@ -117,11 +117,11 @@ func initCategoryRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Co
 	handler := categoryHandler.NewCategoryHandler(service)
 
 	category := e.Group("/api/v1/categories", echojwt.WithConfig(jwtMiddlewareConfig))
-	category.POST("", handler.CreateCategory)
+	category.POST("", handler.CreateCategory, middlewares.AdminOnly())
 	category.GET("", handler.GetCategories)
 	category.GET("/:id", handler.GetCategory)
-	category.PUT("/:id", handler.UpdateCategory)
-	category.DELETE("/:id", handler.DeleteCategory)
+	category.PUT("/:id", handler.UpdateCategory, middlewares.AdminOnly())
+	category.DELETE("/:id", handler.DeleteCategory, middlewares.AdminOnly())
 }
 
 func initPlantRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
@@ -130,9 +130,9 @@ func initPlantRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Confi
 	handler := plantHandler.NewPlantHandler(service)
 
 	plant := e.Group("/api/v1/plants", echojwt.WithConfig(jwtMiddlewareConfig))
-	plant.POST("", handler.CreatePlant)
+	plant.POST("", handler.CreatePlant, middlewares.AdminOnly())
 	plant.GET("", handler.GetPlants)
 	plant.GET("/:id", handler.GetPlant)
-	plant.PUT("/:id", handler.UpdatePlant)
-	plant.DELETE("/:id", handler.DeletePlant)
+	plant.PUT("/:id", handler.UpdatePlant, middlewares.AdminOnly())
+	plant.DELETE("/:id", handler.DeletePlant, middlewares.AdminOnly())
 }
