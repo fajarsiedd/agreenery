@@ -91,7 +91,7 @@ func (r categoryRepository) UpdateCategory(category entities.Category) (entities
 func (r categoryRepository) DeleteCategory(id string) error {
 	categoryModel := models.Category{}
 
-	if err := r.db.Delete(&categoryModel, &id).Error; err != nil {
+	if err := r.db.Unscoped().Delete(&categoryModel, &id).Error; err != nil {
 		return err
 	}
 

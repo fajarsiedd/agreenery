@@ -10,4 +10,5 @@ type Plant struct {
 	ImageFile   multipart.File
 	CategoryID  string
 	Category    Category
+	Steps       []Step
 }

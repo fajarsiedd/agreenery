@@ -12,5 +12,6 @@ func MigrateDB(db *gorm.DB) {
 		&models.User{},
 		&models.Category{},
 		&models.Plant{},
+		&models.Step{},
 	)
 }

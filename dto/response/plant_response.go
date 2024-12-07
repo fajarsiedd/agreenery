@@ -7,25 +7,27 @@ import (
 
 type PlantResponse struct {
 	base.Base
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Image       string `json:"image"`
-	Category    string `json:"category"`
+	Name        string           `json:"name"`
+	Description string           `json:"description"`
+	Image       string           `json:"image"`
+	Category    string           `json:"category"`
+	Steps       ListStepResponse `json:"steps,omitempty"`
 }
 
 type ListPlantResponse []PlantResponse
 
-func (p PlantResponse) FromEntity(plant entities.Plant) PlantResponse {
+func (r PlantResponse) FromEntity(plant entities.Plant) PlantResponse {
 	return PlantResponse{
-		Base:        p.Base.FromEntity(plant.Base),
+		Base:        r.Base.FromEntity(plant.Base),
 		Name:        plant.Name,
 		Description: plant.Description,
 		Image:       plant.Image,
 		Category:    plant.Category.Name,
+		Steps:       r.Steps.FromListEntity(plant.Steps),
 	}
 }
 
-func (lp ListPlantResponse) FromListEntity(plants []entities.Plant) ListPlantResponse {
+func (lr ListPlantResponse) FromListEntity(plants []entities.Plant) ListPlantResponse {
 	data := ListPlantResponse{}
 
 	for _, v := range plants {

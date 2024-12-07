@@ -9,6 +9,7 @@ type Plant struct {
 	Image       string
 	CategoryID  string   `gorm:"size:191"`
 	Category    Category `gorm:"foreignKey:CategoryID;references:ID"`
+	Steps       ListStep
 }
 
 type ListPlant []Plant
@@ -21,6 +22,7 @@ func (p Plant) FromEntity(plant entities.Plant) Plant {
 		Image:       plant.Image,
 		CategoryID:  plant.CategoryID,
 		Category:    p.Category.FromEntity(plant.Category),
+		Steps:       p.Steps.FromListEntity(plant.Steps),
 	}
 }
 
@@ -32,6 +34,7 @@ func (p Plant) ToEntity() entities.Plant {
 		Image:       p.Image,
 		CategoryID:  p.CategoryID,
 		Category:    p.Category.ToEntity(),
+		Steps:       p.Steps.ToListEntity(),
 	}
 }
 
