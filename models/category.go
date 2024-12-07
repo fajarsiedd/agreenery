@@ -31,21 +31,21 @@ func (c Category) ToEntity() entities.Category {
 }
 
 func (lc ListCategory) FromListEntity(categories []entities.Category) ListCategory {
-	listCategory := ListCategory{}
+	data := ListCategory{}
 
 	for _, v := range categories {
-		listCategory = append(listCategory, Category{}.FromEntity(v))
+		data = append(data, Category{}.FromEntity(v))
 	}
 
-	return listCategory
+	return data
 }
 
 func (lc ListCategory) ToListEntity() []entities.Category {
-	categories := []entities.Category{}
+	data := []entities.Category{}
 
 	for _, v := range lc {
-		categories = append(categories, v.ToEntity())
+		data = append(data, v.ToEntity())
 	}
 
-	return categories
+	return data
 }

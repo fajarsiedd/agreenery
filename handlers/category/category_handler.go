@@ -1,4 +1,4 @@
-package handler
+package category
 
 import (
 	"github.com/labstack/echo/v4"
