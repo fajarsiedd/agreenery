@@ -5,15 +5,18 @@ import (
 	categoryHandler "go-agreenery/handlers/category"
 	plantHandler "go-agreenery/handlers/plant"
 	regionHandler "go-agreenery/handlers/region"
+	stepHandler "go-agreenery/handlers/step"
 	weatherHandler "go-agreenery/handlers/weather"
 	"go-agreenery/middlewares"
 	authRepo "go-agreenery/repositories/auth"
 	categoryRepo "go-agreenery/repositories/category"
 	plantRepo "go-agreenery/repositories/plant"
+	stepRepo "go-agreenery/repositories/step"
 	authService "go-agreenery/services/auth"
 	categoryService "go-agreenery/services/category"
 	plantService "go-agreenery/services/plant"
 	regionService "go-agreenery/services/region"
+	stepService "go-agreenery/services/step"
 	weatherService "go-agreenery/services/weather"
 	"os"
 	"time"
@@ -68,6 +71,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initCategoryRoute(e, db, jwtMiddlewareConfig)
 
 	initPlantRoute(e, db, jwtMiddlewareConfig)
+
+	initStepRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -135,4 +140,15 @@ func initPlantRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Confi
 	plant.GET("/:id", handler.GetPlant)
 	plant.PUT("/:id", handler.UpdatePlant, middlewares.AdminOnly())
 	plant.DELETE("/:id", handler.DeletePlant, middlewares.AdminOnly())
+}
+
+func initStepRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := stepRepo.NewStepRepository(db)
+	service := stepService.NewStepService(repository)
+	handler := stepHandler.NewStepHandler(service)
+
+	plant := e.Group("/api/v1/steps", echojwt.WithConfig(jwtMiddlewareConfig), middlewares.AdminOnly())
+	plant.POST("", handler.CreateStep)
+	plant.PUT("/:id", handler.UpdateStep)
+	plant.DELETE("/:id", handler.DeleteStep)
 }

@@ -61,7 +61,10 @@ func (r plantRepository) GetPlants(filter entities.Filter) ([]entities.Plant, en
 func (r plantRepository) GetPlant(id string) (entities.Plant, error) {
 	plantModel := models.Plant{}
 
-	if err := r.db.Preload("Category").First(&plantModel, &id).Error; err != nil {
+	if err := r.db.Preload("Category").Preload("Steps", func(db *gorm.DB) *gorm.DB {
+		db = db.Order("created_at ASC")
+		return db
+	}).First(&plantModel, &id).Error; err != nil {
 		return entities.Plant{}, err
 	}
 
@@ -81,7 +84,10 @@ func (r plantRepository) CreatePlant(plant entities.Plant) (entities.Plant, erro
 func (r plantRepository) UpdatePlant(plant entities.Plant) (entities.Plant, error) {
 	plantModel := models.Plant{}.FromEntity(plant)
 
-	if err := r.db.Updates(&plantModel).Preload("Category").Find(&plantModel).Error; err != nil {
+	if err := r.db.Updates(&plantModel).Preload("Category").Preload("Steps", func(db *gorm.DB) *gorm.DB {
+		db = db.Order("created_at ASC")
+		return db
+	}).Find(&plantModel).Error; err != nil {
 		return entities.Plant{}, err
 	}
 
@@ -90,8 +96,21 @@ func (r plantRepository) UpdatePlant(plant entities.Plant) (entities.Plant, erro
 
 func (r plantRepository) DeletePlant(id string) error {
 	plantModel := models.Plant{}
+	stepModel := models.Step{}
 
-	if err := r.db.Select("Step").Delete(&plantModel, &id).Error; err != nil {
+	err := r.db.Transaction(func(tx *gorm.DB) error {
+		if err := r.db.Unscoped().Where("plant_id = ?", id).Delete(&stepModel).Error; err != nil {
+			return err
+		}
+
+		if err := r.db.Unscoped().Delete(&plantModel, &id).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
 		return err
 	}
 
