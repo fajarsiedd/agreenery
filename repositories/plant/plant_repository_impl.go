@@ -23,11 +23,11 @@ func (r plantRepository) GetPlants(filter entities.Filter) ([]entities.Plant, en
 	query := r.db.Model(&plantModel)
 
 	if filter.Category != "" {
-		query = query.Joins("Category").Where("Category.Name = ?", filter.Category)
+		query = query.InnerJoins("Category").Where("Category.Name = ?", filter.Category)
 	}
 
 	if filter.Search != "" {
-		query = query.Where("name LIKE ?", "%"+filter.Search+"%")
+		query = query.Table("plants").Where("plants.name LIKE ?", "%"+filter.Search+"%")
 	}
 
 	if !filter.StartDate.IsZero() && !filter.EndDate.IsZero() {
