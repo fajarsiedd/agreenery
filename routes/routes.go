@@ -3,6 +3,7 @@ package routes
 import (
 	authHandler "go-agreenery/handlers/auth"
 	categoryHandler "go-agreenery/handlers/category"
+	enrollmentHandler "go-agreenery/handlers/enrollment"
 	plantHandler "go-agreenery/handlers/plant"
 	regionHandler "go-agreenery/handlers/region"
 	stepHandler "go-agreenery/handlers/step"
@@ -10,10 +11,12 @@ import (
 	"go-agreenery/middlewares"
 	authRepo "go-agreenery/repositories/auth"
 	categoryRepo "go-agreenery/repositories/category"
+	enrollmentRepo "go-agreenery/repositories/enrollment"
 	plantRepo "go-agreenery/repositories/plant"
 	stepRepo "go-agreenery/repositories/step"
 	authService "go-agreenery/services/auth"
 	categoryService "go-agreenery/services/category"
+	enrollmentService "go-agreenery/services/enrollment"
 	plantService "go-agreenery/services/plant"
 	regionService "go-agreenery/services/region"
 	stepService "go-agreenery/services/step"
@@ -73,6 +76,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initPlantRoute(e, db, jwtMiddlewareConfig)
 
 	initStepRoute(e, db, jwtMiddlewareConfig)
+
+	initEnrollmentRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -151,4 +156,18 @@ func initStepRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config
 	plant.POST("", handler.CreateStep)
 	plant.PUT("/:id", handler.UpdateStep)
 	plant.DELETE("/:id", handler.DeleteStep)
+}
+
+func initEnrollmentRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := enrollmentRepo.NewEnrollmentRepository(db)
+	service := enrollmentService.NewEnrollmentService(repository)
+	handler := enrollmentHandler.NewEnrollmentHandler(service)
+
+	enrollment := e.Group("/api/v1/enrollments", echojwt.WithConfig(jwtMiddlewareConfig))
+	enrollment.POST("", handler.CreateEnrollment)
+	enrollment.GET("", handler.GetEnrollments)
+	enrollment.GET("/:enrollmentID", handler.GetEnrollment)
+	enrollment.POST("/steps/:stepID/complete", handler.MarkStepAsComplete)
+	enrollment.POST("/:enrollmentID/done", handler.SetEnrollmentStatusAsDone)
+	enrollment.DELETE("/:enrollmentID", handler.DeleteEnrollment)
 }

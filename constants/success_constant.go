@@ -41,10 +41,11 @@ const (
 	DeleteStepSuccess string = "step deleted successfully"
 	CreateStepSuccess string = "new step created successfully"
 
-	// USER PLANT
-	GetUserPlantsSuccess     string = "user plants retreived successfully"
-	GetUserPlantSuccess      string = "user plant retreived successfully"
-	AddUserPlantSuccess      string = "plant added successfully"
-	MarkCompleteStepSuccess  string = "step marked as complete successfully"
-	MarkCompletePlantSuccess string = "plant care is completed successfully"
+	// ENROLLMENT
+	GetEnrollmentsSuccess            string = "enrollments retreived successfully"
+	GetEnrollmentSuccess             string = "enrollment retreived successfully"
+	CreateEnrollmentSuccess          string = "enrollment created successfully"
+	MarkStepAsCompleteSuccess        string = "step marked as complete successfully"
+	SetEnrollmentStatusAsDoneSuccess string = "enrollment status changed successfully"
+	DeleteEnrollmentSuccess          string = "enrollment deleted successfully"
 )

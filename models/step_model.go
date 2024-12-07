@@ -12,9 +12,9 @@ type Step struct {
 
 type ListStep []Step
 
-func (p Step) FromEntity(step entities.Step) Step {
+func (s Step) FromEntity(step entities.Step) Step {
 	return Step{
-		Base:        p.Base.FromEntity(step.Base),
+		Base:        s.Base.FromEntity(step.Base),
 		Title:       step.Title,
 		Description: step.Description,
 		VideoURL:    step.VideoURL,
@@ -22,17 +22,17 @@ func (p Step) FromEntity(step entities.Step) Step {
 	}
 }
 
-func (p Step) ToEntity() entities.Step {
+func (s Step) ToEntity() entities.Step {
 	return entities.Step{
-		Base:        p.Base.ToEntity(),
-		Title:       p.Title,
-		Description: p.Description,
-		VideoURL:    p.VideoURL,
-		PlantID:     p.PlantID,
+		Base:        s.Base.ToEntity(),
+		Title:       s.Title,
+		Description: s.Description,
+		VideoURL:    s.VideoURL,
+		PlantID:     s.PlantID,
 	}
 }
 
-func (lp ListStep) FromListEntity(categories []entities.Step) ListStep {
+func (ls ListStep) FromListEntity(categories []entities.Step) ListStep {
 	data := ListStep{}
 
 	for _, v := range categories {
@@ -42,10 +42,10 @@ func (lp ListStep) FromListEntity(categories []entities.Step) ListStep {
 	return data
 }
 
-func (lp ListStep) ToListEntity() []entities.Step {
+func (ls ListStep) ToListEntity() []entities.Step {
 	data := []entities.Step{}
 
-	for _, v := range lp {
+	for _, v := range ls {
 		data = append(data, v.ToEntity())
 	}
 
