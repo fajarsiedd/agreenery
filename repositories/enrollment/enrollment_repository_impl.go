@@ -72,7 +72,7 @@ func (r enrollmentRepository) GetEnrollments(filter entities.Filter) ([]entities
 	query := r.db.Model(&enrolledPlantModel).Where("user_id = ?", filter.UserID)
 
 	if filter.Search != "" {
-		query = query.InnerJoins("Plant").Where("plant.name LIKE ?", "%"+filter.Search+"%")
+		query = query.InnerJoins("Plant").Where("Plant.Name LIKE ?", "%"+filter.Search+"%")
 	}
 
 	if !filter.StartDate.IsZero() && !filter.EndDate.IsZero() {
