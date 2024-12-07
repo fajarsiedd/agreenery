@@ -3,13 +3,16 @@ package routes
 import (
 	authHandler "go-agreenery/handlers/auth"
 	categoryHandler "go-agreenery/handlers/category"
+	plantHandler "go-agreenery/handlers/plant"
 	regionHandler "go-agreenery/handlers/region"
 	weatherHandler "go-agreenery/handlers/weather"
 	"go-agreenery/middlewares"
 	authRepo "go-agreenery/repositories/auth"
 	categoryRepo "go-agreenery/repositories/category"
+	plantRepo "go-agreenery/repositories/plant"
 	authService "go-agreenery/services/auth"
 	categoryService "go-agreenery/services/category"
+	plantService "go-agreenery/services/plant"
 	regionService "go-agreenery/services/region"
 	weatherService "go-agreenery/services/weather"
 	"os"
@@ -63,6 +66,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initWeatherRoute(e, jwtMiddlewareConfig)
 
 	initCategoryRoute(e, db, jwtMiddlewareConfig)
+
+	initPlantRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -117,4 +122,17 @@ func initCategoryRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Co
 	category.GET("/:id", handler.GetCategory)
 	category.PUT("/:id", handler.UpdateCategory)
 	category.DELETE("/:id", handler.DeleteCategory)
+}
+
+func initPlantRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := plantRepo.NewPlantRepository(db)
+	service := plantService.NewPlantService(repository)
+	handler := plantHandler.NewPlantHandler(service)
+
+	plant := e.Group("/api/v1/plants", echojwt.WithConfig(jwtMiddlewareConfig))
+	plant.POST("", handler.CreatePlant)
+	plant.GET("", handler.GetPlants)
+	plant.GET("/:id", handler.GetPlant)
+	plant.PUT("/:id", handler.UpdatePlant)
+	plant.DELETE("/:id", handler.DeletePlant)
 }
