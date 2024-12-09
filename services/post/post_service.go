@@ -8,4 +8,5 @@ type PostService interface {
 	CreatePost(post entities.Post) (entities.Post, error)
 	UpdatePost(post entities.Post, currUserID string) (entities.Post, error)
 	DeletePost(id, currUserID string) error
+	LikePost(id, currUserID string) (entities.Post, error)
 }

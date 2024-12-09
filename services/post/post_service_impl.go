@@ -121,3 +121,7 @@ func (s postService) DeletePost(id, currUserID string) error {
 
 	return nil
 }
+
+func (s postService) LikePost(id, currUserID string) (entities.Post, error) {
+	return s.repository.LikePost(id, currUserID)
+}

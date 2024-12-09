@@ -188,3 +188,50 @@ func (r postRepository) DeletePost(id, currUserID string) (string, error) {
 
 	return media, nil
 }
+
+func (r postRepository) LikePost(id, currUserID string) (entities.Post, error) {
+	postModel := models.Post{}
+
+	err := r.db.Transaction(func(tx *gorm.DB) error {
+		if err := tx.First(&postModel, &id).Error; err != nil {
+			return err
+		}
+
+		var likeCount int64
+		if err := tx.Model(&models.Like{}).Where("post_id = ? AND user_id = ?", id, currUserID).Count(&likeCount).Error; err != nil {
+			return err
+		}
+
+		if likeCount == 0 {
+			if err := tx.Create(&models.Like{PostID: id, UserID: currUserID}).Error; err != nil {
+				return err
+			}
+		} else {
+			if err := tx.Unscoped().Where("post_id = ? AND user_id = ?", id, currUserID).Delete(&models.Like{}).Error; err != nil {
+				return err
+			}
+		}
+
+		if err := tx.Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Credential")
+		}).Preload("Category").Select(`
+            posts.*, 
+            (SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS count_comments, 
+            (SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id) AS count_likes,
+            EXISTS (
+                SELECT 1 
+                FROM likes 
+                WHERE likes.post_id = posts.id AND likes.user_id = ?
+            ) AS is_liked
+        `, currUserID).First(&postModel, &id).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+	if err != nil {
+		return entities.Post{}, err
+	}
+
+	return postModel.ToEntity(), nil
+}

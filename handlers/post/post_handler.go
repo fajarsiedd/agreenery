@@ -8,4 +8,5 @@ type PostHandler interface {
 	CreatePost(c echo.Context) error
 	UpdatePost(c echo.Context) error
 	DeletePost(c echo.Context) error
+	LikePost(c echo.Context) error
 }

@@ -175,3 +175,19 @@ func (h postHandler) DeletePost(c echo.Context) error {
 
 	return base.SuccessResponse(c, constants.DeletePostSuccess, nil)
 }
+
+func (h postHandler) LikePost(c echo.Context) error {
+	id := c.Param("id")
+
+	claims, _, err := middlewares.GetCurrentToken(c)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	result, err := h.service.LikePost(id, claims.UserID)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	return base.SuccessResponse(c, constants.ChangeLikeStatusSuccess, response.PostResponse{}.FromEntity(result))
+}
