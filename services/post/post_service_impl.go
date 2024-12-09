@@ -59,19 +59,19 @@ func (s postService) CreatePost(post entities.Post) (entities.Post, error) {
 }
 
 func (s postService) UpdatePost(post entities.Post, currUserID string) (entities.Post, error) {
-	postDb, err := s.repository.GetPost(post.ID, post.UserID)
-	if err != nil {
-		return entities.Post{}, err
-	}
-
-	var oldObj string
-	if postDb.Media != "" {
-		splittedStr := strings.Split(postDb.Media, "/")
-		oldObj = splittedStr[len(splittedStr)-1]
-	}
-
 	var url string
 	if post.MediaFile != nil {
+		postDb, err := s.repository.GetPost(post.ID, post.UserID)
+		if err != nil {
+			return entities.Post{}, err
+		}
+
+		var oldObj string
+		if postDb.Media != "" {
+			splittedStr := strings.Split(postDb.Media, "/")
+			oldObj = splittedStr[len(splittedStr)-1]
+		}
+
 		params := helpers.UploaderParams{
 			File:         post.MediaFile,
 			OldObjectURL: oldObj,
