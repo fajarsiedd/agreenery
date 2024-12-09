@@ -23,18 +23,18 @@ func (s enrollmentService) GetEnrollments(filter entities.Filter) ([]entities.En
 	return s.repository.GetEnrollments(filter)
 }
 
-func (s enrollmentService) GetEnrollment(enrollmentID string) (entities.EnrolledPlant, error) {
-	return s.repository.GetEnrollment(enrollmentID)
+func (s enrollmentService) GetEnrollment(enrollmentID, currUserID string) (entities.EnrolledPlant, error) {
+	return s.repository.GetEnrollment(enrollmentID, currUserID)
 }
 
-func (s enrollmentService) MarkStepAsComplete(stepID string) (entities.EnrolledPlant, error) {
-	return s.repository.MarkStepAsComplete(stepID)
+func (s enrollmentService) MarkStepAsComplete(stepID, currUserID string) (entities.EnrolledPlant, error) {
+	return s.repository.MarkStepAsComplete(stepID, currUserID)
 }
 
-func (s enrollmentService) SetEnrollmentStatusAsDone(enrollmentID string) (entities.EnrolledPlant, error) {
-	return s.repository.SetEnrollmentStatusAsDone(enrollmentID)
+func (s enrollmentService) SetEnrollmentStatusAsDone(enrollmentID, currUserID string) (entities.EnrolledPlant, error) {
+	return s.repository.SetEnrollmentStatusAsDone(enrollmentID, currUserID)
 }
 
-func (s enrollmentService) DeleteEnrollment(enrollmentID string) error {
-	return s.repository.DeleteEnrollment(enrollmentID)
+func (s enrollmentService) DeleteEnrollment(enrollmentID, currUserID string) error {
+	return s.repository.DeleteEnrollment(enrollmentID, currUserID)
 }
