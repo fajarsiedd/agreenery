@@ -9,4 +9,5 @@ type PostHandler interface {
 	UpdatePost(c echo.Context) error
 	DeletePost(c echo.Context) error
 	LikePost(c echo.Context) error
+	GetPostsCountByCategory(c echo.Context) error
 }

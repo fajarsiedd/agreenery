@@ -1,6 +1,7 @@
 package routes
 
 import (
+	articleHandler "go-agreenery/handlers/article"
 	authHandler "go-agreenery/handlers/auth"
 	categoryHandler "go-agreenery/handlers/category"
 	commentHandler "go-agreenery/handlers/comment"
@@ -11,6 +12,7 @@ import (
 	stepHandler "go-agreenery/handlers/step"
 	weatherHandler "go-agreenery/handlers/weather"
 	"go-agreenery/middlewares"
+	articleRepo "go-agreenery/repositories/article"
 	authRepo "go-agreenery/repositories/auth"
 	categoryRepo "go-agreenery/repositories/category"
 	commentRepo "go-agreenery/repositories/comment"
@@ -18,6 +20,7 @@ import (
 	plantRepo "go-agreenery/repositories/plant"
 	postRepo "go-agreenery/repositories/post"
 	stepRepo "go-agreenery/repositories/step"
+	articleService "go-agreenery/services/article"
 	authService "go-agreenery/services/auth"
 	categoryService "go-agreenery/services/category"
 	commentService "go-agreenery/services/comment"
@@ -88,6 +91,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initPostRoute(e, db, jwtMiddlewareConfig)
 
 	initCommentRoute(e, db, jwtMiddlewareConfig)
+
+	initArticleRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -194,6 +199,7 @@ func initPostRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config
 	post.PUT("/:id", handler.UpdatePost)
 	post.DELETE("/:id", handler.DeletePost)
 	post.POST("/:id/like", handler.LikePost)
+	post.GET("/trending", handler.GetPostsCountByCategory)
 }
 
 func initCommentRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
@@ -206,4 +212,17 @@ func initCommentRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Con
 	comment.GET("", handler.GetComments)
 	comment.PUT("/:id", handler.UpdateComment)
 	comment.DELETE("/:id", handler.DeleteComment)
+}
+
+func initArticleRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := articleRepo.NewArticleRepository(db)
+	service := articleService.NewArticleService(repository)
+	handler := articleHandler.NewArticleHandler(service)
+
+	article := e.Group("/api/v1/articles", echojwt.WithConfig(jwtMiddlewareConfig))
+	article.POST("", handler.CreateArticle, middlewares.AdminOnly())
+	article.GET("", handler.GetArticles)
+	article.GET("/:id", handler.GetArticle)
+	article.PUT("/:id", handler.UpdateArticle, middlewares.AdminOnly())
+	article.DELETE("/:id", handler.DeleteArticle, middlewares.AdminOnly())
 }

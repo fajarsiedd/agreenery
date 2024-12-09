@@ -191,3 +191,12 @@ func (h postHandler) LikePost(c echo.Context) error {
 
 	return base.SuccessResponse(c, constants.ChangeLikeStatusSuccess, response.PostResponse{}.FromEntity(result))
 }
+
+func (h postHandler) GetPostsCountByCategory(c echo.Context) error {
+	result, err := h.service.GetPostsCountByCategory()
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	return base.SuccessResponse(c, constants.TrendingPostSuccess, response.ListTrendingPostResponse{}.FromListEntity(result))
+}

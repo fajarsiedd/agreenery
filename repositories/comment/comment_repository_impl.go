@@ -32,10 +32,10 @@ func (r commentRepository) GetComments(filter entities.Filter) ([]entities.Comme
 	}
 
 	if !filter.StartDate.IsZero() && !filter.EndDate.IsZero() {
-		query = query.Where("created_at BETWEEN ? AND ?", filter.StartDate, filter.EndDate)
+		query = query.Where("comments.created_at BETWEEN ? AND ?", filter.StartDate, filter.EndDate)
 	}
 
-	query = query.Order(filter.SortBy + " " + filter.Sort)
+	query = query.Order("comments." + filter.SortBy + " " + filter.Sort)
 
 	var totalItems int64
 	if err := query.Count(&totalItems).Error; err != nil {

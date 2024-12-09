@@ -235,3 +235,20 @@ func (r postRepository) LikePost(id, currUserID string) (entities.Post, error) {
 
 	return postModel.ToEntity(), nil
 }
+
+func (r postRepository) GetPostsCountByCategory() ([]entities.Category, error) {
+	categoryModel := models.ListCategory{}
+
+	query := r.db.Model(&categoryModel)
+
+	query = query.Model(&models.Category{}).Select(`
+		categories.*,
+		(SELECT COUNT(*) FROM posts WHERE posts.category_id = categories.id) AS count_posts
+	`).Where("type = ?", "post").Having("count_posts > 0").Order("count_posts DESC")
+
+	if err := query.Find(&categoryModel).Error; err != nil {
+		return nil, err
+	}
+
+	return categoryModel.ToListEntity(), nil
+}

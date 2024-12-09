@@ -55,6 +55,7 @@ const (
 	UpdatePostSuccess string = "post updated successfully"
 	DeletePostSuccess string = "post deleted successfully"
 	CreatePostSuccess string = "new post created successfully"
+	TrendingPostSuccess string = "trending posts retreived successfully"
 
 	// COMMENT
 	GetCommentsSuccess   string = "comments retreived successfully"
@@ -64,4 +65,11 @@ const (
 
 	// LIKE
 	ChangeLikeStatusSuccess string = "like status changed successfully"
+
+	// ARTICLE
+	GetArticlesSuccess   string = "articles retreived successfully"
+	GetArticleSuccess    string = "article retreived successfully"
+	UpdateArticleSuccess string = "article updated successfully"
+	DeleteArticleSuccess string = "article deleted successfully"
+	CreateArticleSuccess string = "new article created successfully"
 )

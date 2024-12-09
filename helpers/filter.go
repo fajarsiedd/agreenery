@@ -59,16 +59,19 @@ func GetFilter(c echo.Context) (entities.Filter, error) {
 
 	categoryType := c.QueryParam("category_type")
 
+	publishStatus := c.QueryParam("publish_status")
+
 	params := entities.Filter{
-		Page:         page,
-		Limit:        limit,
-		Search:       search,
-		Sort:         sort,
-		SortBy:       sortBy,
-		StartDate:    startDate,
-		EndDate:      endDate,
-		Category:     category,
-		CategoryType: categoryType,
+		Page:          page,
+		Limit:         limit,
+		Search:        search,
+		Sort:          sort,
+		SortBy:        sortBy,
+		StartDate:     startDate,
+		EndDate:       endDate,
+		Category:      category,
+		CategoryType:  categoryType,
+		PublishStatus: publishStatus,
 	}
 
 	return params, nil
