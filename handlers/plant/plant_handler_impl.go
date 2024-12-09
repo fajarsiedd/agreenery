@@ -61,28 +61,27 @@ func (h plantHandler) CreatePlant(c echo.Context) error {
 	}
 
 	file, err := c.FormFile("image")
-	if err != nil {
-		return base.ErrorResponse(c, err)
+	if err == nil {
+		var maxFileSize int64 = 1048576 * 2
+		if file.Size > maxFileSize {
+			return base.ErrorResponse(c, constants.ErrFileSizeExceedsLimit)
+		}
+
+		blobFile, err := file.Open()
+		if err != nil {
+			return base.ErrorResponse(c, err)
+		}
+		defer blobFile.Close()
+
+		temp, _ := file.Open()
+		buf, _ := io.ReadAll(temp)
+		if !filetype.IsImage(buf) {
+			return base.ErrorResponse(c, constants.ErrOnlyImageAllowed)
+		}
+
+		req.Image = blobFile
 	}
 
-	var maxFileSize int64 = 1048576 * 2
-	if file.Size > maxFileSize {
-		return base.ErrorResponse(c, constants.ErrFileSizeExceedsLimit)
-	}
-
-	blobFile, err := file.Open()
-	if err != nil {
-		return base.ErrorResponse(c, err)
-	}
-	defer blobFile.Close()
-
-	temp, _ := file.Open()
-	buf, _ := io.ReadAll(temp)
-	if !filetype.IsImage(buf) {
-		return base.ErrorResponse(c, constants.ErrOnlyImageAllowed)
-	}
-
-	req.Image = blobFile
 	plant := req.ToEntity()
 
 	result, err := h.service.CreatePlant(plant)
@@ -107,28 +106,27 @@ func (h plantHandler) UpdatePlant(c echo.Context) error {
 	}
 
 	file, err := c.FormFile("image")
-	if err != nil {
-		return base.ErrorResponse(c, err)
+	if err == nil {
+		var maxFileSize int64 = 1048576 * 2
+		if file.Size > maxFileSize {
+			return base.ErrorResponse(c, constants.ErrFileSizeExceedsLimit)
+		}
+
+		blobFile, err := file.Open()
+		if err != nil {
+			return base.ErrorResponse(c, err)
+		}
+		defer blobFile.Close()
+
+		temp, _ := file.Open()
+		buf, _ := io.ReadAll(temp)
+		if !filetype.IsImage(buf) {
+			return base.ErrorResponse(c, constants.ErrOnlyImageAllowed)
+		}
+
+		req.Image = blobFile
 	}
 
-	var maxFileSize int64 = 1048576 * 2
-	if file.Size > maxFileSize {
-		return base.ErrorResponse(c, constants.ErrFileSizeExceedsLimit)
-	}
-
-	blobFile, err := file.Open()
-	if err != nil {
-		return base.ErrorResponse(c, err)
-	}
-	defer blobFile.Close()
-
-	temp, _ := file.Open()
-	buf, _ := io.ReadAll(temp)
-	if !filetype.IsImage(buf) {
-		return base.ErrorResponse(c, constants.ErrOnlyImageAllowed)
-	}
-
-	req.Image = blobFile
 	plant := req.ToEntity()
 
 	result, err := h.service.UpdatePlant(plant)

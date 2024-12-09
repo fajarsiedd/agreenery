@@ -26,13 +26,18 @@ func (s plantService) GetPlant(id string) (entities.Plant, error) {
 }
 
 func (s plantService) CreatePlant(plant entities.Plant) (entities.Plant, error) {
-	params := helpers.UploaderParams{
-		File: plant.ImageFile,
-	}
+	var url string
+	if plant.ImageFile != nil {
+		params := helpers.UploaderParams{
+			File: plant.ImageFile,
+		}
 
-	url, err := helpers.UploadFile(params)
-	if err != nil {
-		return entities.Plant{}, err
+		result, err := helpers.UploadFile(params)
+		if err != nil {
+			return entities.Plant{}, err
+		}
+
+		url = result
 	}
 
 	plant.Image = url
@@ -54,25 +59,30 @@ func (s plantService) CreatePlant(plant entities.Plant) (entities.Plant, error) 
 }
 
 func (s plantService) UpdatePlant(plant entities.Plant) (entities.Plant, error) {
-	plantDb, err := s.repository.GetPlant(plant.ID)
-	if err != nil {
-		return entities.Plant{}, err
-	}
+	var url string
+	if plant.ImageFile != nil {
+		plantDb, err := s.repository.GetPlant(plant.ID)
+		if err != nil {
+			return entities.Plant{}, err
+		}
 
-	var oldObj string
-	if plantDb.Image != "" {
-		splittedStr := strings.Split(plantDb.Image, "/")
-		oldObj = splittedStr[len(splittedStr)-1]
-	}
+		var oldObj string
+		if plantDb.Image != "" {
+			splittedStr := strings.Split(plantDb.Image, "/")
+			oldObj = splittedStr[len(splittedStr)-1]
+		}
 
-	params := helpers.UploaderParams{
-		File:         plant.ImageFile,
-		OldObjectURL: oldObj,
-	}
+		params := helpers.UploaderParams{
+			File:         plant.ImageFile,
+			OldObjectURL: oldObj,
+		}
 
-	url, err := helpers.UploadFile(params)
-	if err != nil {
-		return entities.Plant{}, err
+		result, err := helpers.UploadFile(params)
+		if err != nil {
+			return entities.Plant{}, err
+		}
+
+		url = result
 	}
 
 	plant.Image = url
