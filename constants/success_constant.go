@@ -48,4 +48,21 @@ const (
 	MarkStepAsCompleteSuccess        string = "step marked as complete successfully"
 	SetEnrollmentStatusAsDoneSuccess string = "enrollment status changed successfully"
 	DeleteEnrollmentSuccess          string = "enrollment deleted successfully"
+
+	// POST
+	GetPostsSuccess   string = "posts retreived successfully"
+	GetPostSuccess    string = "post retreived successfully"
+	UpdatePostSuccess string = "post updated successfully"
+	DeletePostSuccess string = "post deleted successfully"
+	CreatePostSuccess string = "new post created successfully"
+
+	// COMMENT
+	GetCommentsSuccess   string = "comments retreived successfully"
+	GetCommentSuccess    string = "comment retreived successfully"
+	UpdateCommentSuccess string = "comment updated successfully"
+	DeleteCommentSuccess string = "comment deleted successfully"
+	CreateCommentSuccess string = "new comment created successfully"
+
+	// LIKE
+	ChangeLikeStatusSuccess string = "like status changed successfully"
 )

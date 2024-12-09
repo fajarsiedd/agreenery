@@ -26,8 +26,9 @@ var (
 	ErrIncompatibleArgonVersion error = errors.New("incompatible version of argon2")
 
 	// UPLOADER
-	ErrFileSizeExceedsLimit error = errors.New("file size exceeds 2 Mb limit")
-	ErrOnlyImageAllowed     error = errors.New("only image files are allowed")
+	ErrFileSizeExceedsLimit     error = errors.New("file size exceeds 2 Mb limit")
+	ErrOnlyImageAllowed         error = errors.New("only image files are allowed")
+	ErrOnlyImageAndVideoAllowed error = errors.New("only image and video files are allowed")
 
 	// MAPS
 	ErrGetCoordinatesFailed error = errors.New("no results found for the address")

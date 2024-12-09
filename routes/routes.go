@@ -5,6 +5,7 @@ import (
 	categoryHandler "go-agreenery/handlers/category"
 	enrollmentHandler "go-agreenery/handlers/enrollment"
 	plantHandler "go-agreenery/handlers/plant"
+	postHandler "go-agreenery/handlers/post"
 	regionHandler "go-agreenery/handlers/region"
 	stepHandler "go-agreenery/handlers/step"
 	weatherHandler "go-agreenery/handlers/weather"
@@ -13,11 +14,13 @@ import (
 	categoryRepo "go-agreenery/repositories/category"
 	enrollmentRepo "go-agreenery/repositories/enrollment"
 	plantRepo "go-agreenery/repositories/plant"
+	postRepo "go-agreenery/repositories/post"
 	stepRepo "go-agreenery/repositories/step"
 	authService "go-agreenery/services/auth"
 	categoryService "go-agreenery/services/category"
 	enrollmentService "go-agreenery/services/enrollment"
 	plantService "go-agreenery/services/plant"
+	postService "go-agreenery/services/post"
 	regionService "go-agreenery/services/region"
 	stepService "go-agreenery/services/step"
 	weatherService "go-agreenery/services/weather"
@@ -78,6 +81,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initStepRoute(e, db, jwtMiddlewareConfig)
 
 	initEnrollmentRoute(e, db, jwtMiddlewareConfig)
+
+	initPostRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -170,4 +175,17 @@ func initEnrollmentRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.
 	enrollment.POST("/steps/:stepID/complete", handler.MarkStepAsComplete)
 	enrollment.POST("/:enrollmentID/done", handler.SetEnrollmentStatusAsDone)
 	enrollment.DELETE("/:enrollmentID", handler.DeleteEnrollment)
+}
+
+func initPostRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := postRepo.NewPostRepository(db)
+	service := postService.NewPostService(repository)
+	handler := postHandler.NewPostHandler(service)
+
+	post := e.Group("/api/v1/posts", echojwt.WithConfig(jwtMiddlewareConfig))
+	post.POST("", handler.CreatePost)
+	post.GET("", handler.GetPosts)
+	post.GET("/:id", handler.GetPost)
+	post.PUT("/:id", handler.UpdatePost)
+	post.DELETE("/:id", handler.DeletePost)
 }
