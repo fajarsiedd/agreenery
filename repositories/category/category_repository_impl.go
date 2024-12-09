@@ -31,7 +31,7 @@ func (r categoryRepository) GetCategories(filter entities.Filter) ([]entities.Ca
 	}
 
 	if !filter.StartDate.IsZero() && !filter.EndDate.IsZero() {
-		query = query.Where("created_at BETWEEN ? AND ?", filter.StartDate, filter.EndDate)
+		query = query.Where("categories.created_at BETWEEN ? AND ?", filter.StartDate, filter.EndDate)
 	}
 
 	query = query.Order(filter.SortBy + " " + filter.Sort)

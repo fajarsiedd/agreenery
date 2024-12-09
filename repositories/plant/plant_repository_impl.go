@@ -31,10 +31,10 @@ func (r plantRepository) GetPlants(filter entities.Filter) ([]entities.Plant, en
 	}
 
 	if !filter.StartDate.IsZero() && !filter.EndDate.IsZero() {
-		query = query.Where("created_at BETWEEN ? AND ?", filter.StartDate, filter.EndDate)
+		query = query.Where("plants.created_at BETWEEN ? AND ?", filter.StartDate, filter.EndDate)
 	}
 
-	query = query.Order(filter.SortBy + " " + filter.Sort)
+	query = query.Order("plants." + filter.SortBy + " " + filter.Sort)
 
 	var totalItems int64
 
