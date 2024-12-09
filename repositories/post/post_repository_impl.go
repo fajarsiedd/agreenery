@@ -24,18 +24,18 @@ func (r postRepository) GetPosts(filter entities.Filter) ([]entities.Post, entit
 	query := r.db.Model(&postModel)
 
 	if filter.Category != "" {
-		query = query.InnerJoins("Category").Where("Category.Name = ?", filter.Category)
+		query = query.Joins("INNER JOIN categories ON posts.category_id = categories.id").Where("categories.name = ?", filter.Category)
 	}
 
 	if filter.Search != "" {
-		query = query.Where("content LIKE ?", "%"+filter.Search+"%")
+		query = query.Where("posts.content LIKE ?", "%"+filter.Search+"%")
 	}
 
 	if !filter.StartDate.IsZero() && !filter.EndDate.IsZero() {
-		query = query.Where("created_at BETWEEN ? AND ?", filter.StartDate, filter.EndDate)
+		query = query.Where("posts.created_at BETWEEN ? AND ?", filter.StartDate, filter.EndDate)
 	}
 
-	query = query.Order(filter.SortBy + " " + filter.Sort)
+	query = query.Order("posts." + filter.SortBy + " " + filter.Sort)
 
 	var totalItems int64
 	if err := query.Count(&totalItems).Error; err != nil {
@@ -53,7 +53,7 @@ func (r postRepository) GetPosts(filter entities.Filter) ([]entities.Post, entit
 	})
 
 	query = query.Model(&models.Post{}).Select(`
-		posts.*, 
+		posts.*,
 		(SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS count_comments, 
 		(SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id) AS count_likes,
 		EXISTS (
