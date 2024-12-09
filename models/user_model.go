@@ -11,6 +11,9 @@ type User struct {
 	Photo        string
 	CredentialID string     `gorm:"size:191"`
 	Credential   Credential `gorm:"foreignKey:CredentialID;references:ID"`
+	Posts        ListPost
+	Comments     ListComment
+	Likes        ListLike
 }
 
 func (u User) FromEntity(user entities.User) User {

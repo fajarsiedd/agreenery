@@ -7,10 +7,9 @@ import (
 )
 
 func GetStatusCodeBySuccessMessage(msg string) int {
-	switch msg {
-	case c.RegisterSuccess, c.CreateCategorySuccess, c.CreatePlantSuccess, c.CreateStepSuccess, c.CreateEnrollmentSuccess:
+	if strings.Contains(msg, "registered") || strings.Contains(msg, "created") {
 		return http.StatusCreated
-	default:
+	} else {
 		return http.StatusOK
 	}
 }

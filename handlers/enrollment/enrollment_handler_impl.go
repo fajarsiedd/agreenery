@@ -75,7 +75,12 @@ func (h enrollmentHandler) GetEnrollments(c echo.Context) error {
 func (h enrollmentHandler) GetEnrollment(c echo.Context) error {
 	id := c.Param("enrollmentID")
 
-	result, err := h.service.GetEnrollment(id)
+	claims, _, err := middlewares.GetCurrentToken(c)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	result, err := h.service.GetEnrollment(id, claims.UserID)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}
@@ -86,7 +91,12 @@ func (h enrollmentHandler) GetEnrollment(c echo.Context) error {
 func (h enrollmentHandler) MarkStepAsComplete(c echo.Context) error {
 	id := c.Param("stepID")
 
-	result, err := h.service.MarkStepAsComplete(id)
+	claims, _, err := middlewares.GetCurrentToken(c)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	result, err := h.service.MarkStepAsComplete(id, claims.UserID)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}
@@ -97,7 +107,12 @@ func (h enrollmentHandler) MarkStepAsComplete(c echo.Context) error {
 func (h enrollmentHandler) SetEnrollmentStatusAsDone(c echo.Context) error {
 	id := c.Param("enrollmentID")
 
-	result, err := h.service.SetEnrollmentStatusAsDone(id)
+	claims, _, err := middlewares.GetCurrentToken(c)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	result, err := h.service.SetEnrollmentStatusAsDone(id, claims.UserID)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}
@@ -108,7 +123,12 @@ func (h enrollmentHandler) SetEnrollmentStatusAsDone(c echo.Context) error {
 func (h enrollmentHandler) DeleteEnrollment(c echo.Context) error {
 	id := c.Param("enrollmentID")
 
-	err := h.service.DeleteEnrollment(id)
+	claims, _, err := middlewares.GetCurrentToken(c)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	err = h.service.DeleteEnrollment(id, claims.UserID)
 	if err != nil {
 		return base.ErrorResponse(c, err)
 	}

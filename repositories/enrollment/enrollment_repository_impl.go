@@ -1,6 +1,7 @@
 package enrollment
 
 import (
+	"go-agreenery/constants"
 	"go-agreenery/entities"
 	"go-agreenery/models"
 
@@ -107,7 +108,7 @@ func (r enrollmentRepository) GetEnrollments(filter entities.Filter) ([]entities
 	return enrolledPlantModel.ToListEntity(), pagination, nil
 }
 
-func (r enrollmentRepository) GetEnrollment(enrollmentID string) (entities.EnrolledPlant, error) {
+func (r enrollmentRepository) GetEnrollment(enrollmentID, currUserID string) (entities.EnrolledPlant, error) {
 	enrolledPlantModel := models.EnrolledPlant{}
 
 	if err := r.db.Preload("Plant", func(db *gorm.DB) *gorm.DB {
@@ -116,20 +117,31 @@ func (r enrollmentRepository) GetEnrollment(enrollmentID string) (entities.Enrol
 	}).Preload("EnrolledSteps", func(db *gorm.DB) *gorm.DB {
 		db = db.Preload("Step").Order("created_at ASC")
 		return db
-	}).Where("id = ?", enrollmentID).Find(&enrolledPlantModel).Error; err != nil {
+	}).First(&enrolledPlantModel, &enrollmentID).Error; err != nil {
 		return entities.EnrolledPlant{}, err
+	}
+
+	if enrolledPlantModel.UserID != currUserID {
+		return entities.EnrolledPlant{}, constants.ErrAccessNotAllowed
 	}
 
 	return enrolledPlantModel.ToEntity(), nil
 }
 
-func (r enrollmentRepository) MarkStepAsComplete(stepID string) (entities.EnrolledPlant, error) {
+func (r enrollmentRepository) MarkStepAsComplete(stepID, currUserID string) (entities.EnrolledPlant, error) {
 	enrolledPlantModel := models.EnrolledPlant{}
 
 	err := r.db.Transaction(func(tx *gorm.DB) error {
-		enrolledStepModel := models.EnrolledStep{}
+		enrolledStepDb := models.EnrolledStep{}
+		if err := tx.First(&enrolledStepDb, &stepID).Error; err != nil {
+			return err
+		}
 
-		if err := tx.Model(&enrolledStepModel).Where("id = ?", stepID).Update("mark_complete", true).First(&enrolledStepModel, &stepID).Error; err != nil {
+		if enrolledStepDb.UserID != currUserID {
+			return constants.ErrAccessNotAllowed
+		}
+
+		if err := tx.Model(&enrolledStepDb).Where("id = ?", stepID).Update("mark_complete", true).First(&enrolledStepDb, &stepID).Error; err != nil {
 			return err
 		}
 
@@ -139,7 +151,7 @@ func (r enrollmentRepository) MarkStepAsComplete(stepID string) (entities.Enroll
 		}).Preload("EnrolledSteps", func(db *gorm.DB) *gorm.DB {
 			db = db.Preload("Step").Order("created_at ASC")
 			return db
-		}).First(&enrolledPlantModel, &enrolledStepModel.EnrolledPlantID).Error; err != nil {
+		}).First(&enrolledPlantModel, &enrolledStepDb.EnrolledPlantID).Error; err != nil {
 			return err
 		}
 
@@ -153,8 +165,16 @@ func (r enrollmentRepository) MarkStepAsComplete(stepID string) (entities.Enroll
 	return enrolledPlantModel.ToEntity(), nil
 }
 
-func (r enrollmentRepository) SetEnrollmentStatusAsDone(enrollmentID string) (entities.EnrolledPlant, error) {
+func (r enrollmentRepository) SetEnrollmentStatusAsDone(enrollmentID, currUserID string) (entities.EnrolledPlant, error) {
 	enrolledPlantModel := models.EnrolledPlant{}
+
+	if err := r.db.First(&enrolledPlantModel, &enrollmentID).Error; err != nil {
+		return entities.EnrolledPlant{}, err
+	}
+
+	if enrolledPlantModel.UserID != currUserID {
+		return entities.EnrolledPlant{}, constants.ErrAccessNotAllowed
+	}
 
 	if err := r.db.Where("id = ?", enrollmentID).Model(&enrolledPlantModel).Update("is_done", true).Preload("Plant", func(db *gorm.DB) *gorm.DB {
 		db = db.Preload("Category")
@@ -162,23 +182,31 @@ func (r enrollmentRepository) SetEnrollmentStatusAsDone(enrollmentID string) (en
 	}).Preload("EnrolledSteps", func(db *gorm.DB) *gorm.DB {
 		db = db.Preload("Step").Order("created_at ASC")
 		return db
-	}).Find(&enrolledPlantModel).Error; err != nil {
+	}).First(&enrolledPlantModel, &enrollmentID).Error; err != nil {
 		return entities.EnrolledPlant{}, err
 	}
 
 	return enrolledPlantModel.ToEntity(), nil
 }
 
-func (r enrollmentRepository) DeleteEnrollment(enrollmentID string) error {
+func (r enrollmentRepository) DeleteEnrollment(enrollmentID, currUserID string) error {
 	enrolledPlantModel := models.EnrolledPlant{}
 	enrolledStepModel := models.EnrolledStep{}
 
 	return r.db.Transaction(func(tx *gorm.DB) error {
-		if err := r.db.Unscoped().Where("enrolled_plant_id = ?", enrollmentID).Delete(&enrolledStepModel).Error; err != nil {
+		if err := tx.First(&enrolledPlantModel, &enrollmentID).Error; err != nil {
 			return err
 		}
 
-		if err := r.db.Unscoped().Delete(&enrolledPlantModel, &enrollmentID).Error; err != nil {
+		if enrolledPlantModel.UserID != currUserID {
+			return constants.ErrAccessNotAllowed
+		}
+
+		if err := tx.Unscoped().Where("enrolled_plant_id = ?", enrollmentID).Delete(&enrolledStepModel).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Unscoped().Delete(&enrolledPlantModel, &enrollmentID).Error; err != nil {
 			return err
 		}
 

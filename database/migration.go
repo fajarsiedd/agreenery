@@ -15,5 +15,8 @@ func MigrateDB(db *gorm.DB) {
 		&models.Step{},
 		&models.EnrolledPlant{},
 		&models.EnrolledStep{},
+		&models.Post{},
+		&models.Comment{},
+		&models.Like{},
 	)
 }
