@@ -125,3 +125,7 @@ func (s postService) DeletePost(id, currUserID string) error {
 func (s postService) LikePost(id, currUserID string) (entities.Post, error) {
 	return s.repository.LikePost(id, currUserID)
 }
+
+func (s postService) GetPostsCountByCategory() ([]entities.Category, error) {
+	return s.repository.GetPostsCountByCategory()
+}

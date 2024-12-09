@@ -7,9 +7,12 @@ import (
 
 type Category struct {
 	Base
-	Name   string
-	Type   enums.CategoryType `gorm:"type:enum('article','plant','post')"`
-	Plants []Plant
+	Name       string
+	Type       enums.CategoryType `gorm:"type:enum('article','plant','post')"`
+	Plants     ListPlant
+	Article    ListArticle
+	Posts      ListPost
+	CountPosts int64 `gorm:"->;-:migration"`
 }
 
 type ListCategory []Category
@@ -24,9 +27,10 @@ func (c Category) FromEntity(category entities.Category) Category {
 
 func (c Category) ToEntity() entities.Category {
 	return entities.Category{
-		Base: c.Base.ToEntity(),
-		Name: c.Name,
-		Type: c.Type,
+		Base:       c.Base.ToEntity(),
+		Name:       c.Name,
+		Type:       c.Type,
+		CountPosts: c.CountPosts,
 	}
 }
 

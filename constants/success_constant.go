@@ -55,6 +55,7 @@ const (
 	UpdatePostSuccess string = "post updated successfully"
 	DeletePostSuccess string = "post deleted successfully"
 	CreatePostSuccess string = "new post created successfully"
+	TrendingPostSuccess string = "trending posts retreived successfully"
 
 	// COMMENT
 	GetCommentsSuccess   string = "comments retreived successfully"

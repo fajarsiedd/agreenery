@@ -9,4 +9,5 @@ type PostRepository interface {
 	UpdatePost(post entities.Post, currUserID string) (entities.Post, error)
 	DeletePost(id, currUserID string) (string, error)
 	LikePost(id, currUserID string) (entities.Post, error)
+	GetPostsCountByCategory() ([]entities.Category, error)
 }

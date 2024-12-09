@@ -199,6 +199,7 @@ func initPostRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config
 	post.PUT("/:id", handler.UpdatePost)
 	post.DELETE("/:id", handler.DeletePost)
 	post.POST("/:id/like", handler.LikePost)
+	post.GET("/trending", handler.GetPostsCountByCategory)
 }
 
 func initCommentRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
