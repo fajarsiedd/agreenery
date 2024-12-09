@@ -13,4 +13,5 @@ type Filter struct {
 	UserID       string
 	Category     string
 	CategoryType string
+	PostID       string
 }

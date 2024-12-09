@@ -46,7 +46,7 @@ func (r postRepository) GetPosts(filter entities.Filter) ([]entities.Post, entit
 
 	query = query.Preload("Category").Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Credential")
-	}).Preload("Likes").Preload("Comments", func(db *gorm.DB) *gorm.DB {
+	}).Preload("Comments", func(db *gorm.DB) *gorm.DB {
 		return db.Limit(2).Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Credential")
 		})
@@ -84,10 +84,6 @@ func (r postRepository) GetPost(id, currUserID string) (entities.Post, error) {
 
 	if err := query.Preload("Category").Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Credential")
-	}).Preload("Likes").Preload("Comments", func(db *gorm.DB) *gorm.DB {
-		return db.Preload("User", func(db *gorm.DB) *gorm.DB {
-			return db.Preload("Credential")
-		})
 	}).Select(`posts.*, 
 		(SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS count_comments, 
 		(SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id) AS count_likes,
@@ -134,11 +130,7 @@ func (r postRepository) UpdatePost(post entities.Post, currUserID string) (entit
 
 		if err := tx.Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Credential")
-		}).Preload("Category").Preload("Likes").Preload("Comments", func(db *gorm.DB) *gorm.DB {
-			return db.Preload("User", func(db *gorm.DB) *gorm.DB {
-				return db.Preload("Credential")
-			})
-		}).Select(`posts.*, 
+		}).Preload("Category").Select(`posts.*, 
 			(SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS count_comments, 
 			(SELECT COUNT(*) FROM likes WHERE likes.post_id = posts.id) AS count_likes,
 			EXISTS (

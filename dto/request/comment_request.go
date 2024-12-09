@@ -6,7 +6,6 @@ type CommentRequest struct {
 	ID      string
 	UserID  string
 	Message string `json:"message" validate:"required"`
-	PostID  string `json:"post_id"`
 }
 
 func (r CommentRequest) ToEntity() entities.Comment {
@@ -16,6 +15,5 @@ func (r CommentRequest) ToEntity() entities.Comment {
 		},
 		UserID:  r.UserID,
 		Message: r.Message,
-		PostID:  r.PostID,
 	}
 }

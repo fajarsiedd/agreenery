@@ -58,7 +58,6 @@ const (
 
 	// COMMENT
 	GetCommentsSuccess   string = "comments retreived successfully"
-	GetCommentSuccess    string = "comment retreived successfully"
 	UpdateCommentSuccess string = "comment updated successfully"
 	DeleteCommentSuccess string = "comment deleted successfully"
 	CreateCommentSuccess string = "new comment created successfully"

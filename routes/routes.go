@@ -3,6 +3,7 @@ package routes
 import (
 	authHandler "go-agreenery/handlers/auth"
 	categoryHandler "go-agreenery/handlers/category"
+	commentHandler "go-agreenery/handlers/comment"
 	enrollmentHandler "go-agreenery/handlers/enrollment"
 	plantHandler "go-agreenery/handlers/plant"
 	postHandler "go-agreenery/handlers/post"
@@ -12,12 +13,14 @@ import (
 	"go-agreenery/middlewares"
 	authRepo "go-agreenery/repositories/auth"
 	categoryRepo "go-agreenery/repositories/category"
+	commentRepo "go-agreenery/repositories/comment"
 	enrollmentRepo "go-agreenery/repositories/enrollment"
 	plantRepo "go-agreenery/repositories/plant"
 	postRepo "go-agreenery/repositories/post"
 	stepRepo "go-agreenery/repositories/step"
 	authService "go-agreenery/services/auth"
 	categoryService "go-agreenery/services/category"
+	commentService "go-agreenery/services/comment"
 	enrollmentService "go-agreenery/services/enrollment"
 	plantService "go-agreenery/services/plant"
 	postService "go-agreenery/services/post"
@@ -83,6 +86,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initEnrollmentRoute(e, db, jwtMiddlewareConfig)
 
 	initPostRoute(e, db, jwtMiddlewareConfig)
+
+	initCommentRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -188,4 +193,16 @@ func initPostRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config
 	post.GET("/:id", handler.GetPost)
 	post.PUT("/:id", handler.UpdatePost)
 	post.DELETE("/:id", handler.DeletePost)
+}
+
+func initCommentRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := commentRepo.NewCommentRepository(db)
+	service := commentService.NewCommentService(repository)
+	handler := commentHandler.NewCommentHandler(service)
+
+	comment := e.Group("/api/v1/posts/:postID/comments", echojwt.WithConfig(jwtMiddlewareConfig))
+	comment.POST("", handler.CreateComment)
+	comment.GET("", handler.GetComments)
+	comment.PUT("/:id", handler.UpdateComment)
+	comment.DELETE("/:id", handler.DeleteComment)
 }
