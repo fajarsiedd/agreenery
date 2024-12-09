@@ -77,7 +77,7 @@ func (r postRepository) GetPosts(filter entities.Filter) ([]entities.Post, entit
 	return postModel.ToListEntity(), pagination, nil
 }
 
-func (r postRepository) GetPost(id, userID string) (entities.Post, error) {
+func (r postRepository) GetPost(id, currUserID string) (entities.Post, error) {
 	postModel := models.Post{}
 
 	query := r.db.Model(&postModel)
@@ -96,7 +96,7 @@ func (r postRepository) GetPost(id, userID string) (entities.Post, error) {
 			FROM likes 
 			WHERE likes.post_id = posts.id AND likes.user_id = ?
 		) AS is_liked
-	`, userID).First(&postModel, &id).Error; err != nil {
+	`, currUserID).First(&postModel, &id).Error; err != nil {
 		return entities.Post{}, err
 	}
 
