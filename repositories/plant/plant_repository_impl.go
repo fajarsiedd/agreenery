@@ -74,7 +74,7 @@ func (r plantRepository) GetPlant(id string) (entities.Plant, error) {
 func (r plantRepository) CreatePlant(plant entities.Plant) (entities.Plant, error) {
 	plantModel := models.Plant{}.FromEntity(plant)
 
-	if err := r.db.Create(&plantModel).Preload("Category").Find(&plantModel).Error; err != nil {
+	if err := r.db.Omit("Category").Create(&plantModel).Preload("Category").Find(&plantModel).Error; err != nil {
 		return entities.Plant{}, err
 	}
 
@@ -84,7 +84,7 @@ func (r plantRepository) CreatePlant(plant entities.Plant) (entities.Plant, erro
 func (r plantRepository) UpdatePlant(plant entities.Plant) (entities.Plant, error) {
 	plantModel := models.Plant{}.FromEntity(plant)
 
-	if err := r.db.Updates(&plantModel).Preload("Category").Preload("Steps", func(db *gorm.DB) *gorm.DB {
+	if err := r.db.Omit("Category").Updates(&plantModel).Preload("Category").Preload("Steps", func(db *gorm.DB) *gorm.DB {
 		db = db.Order("created_at ASC")
 		return db
 	}).Find(&plantModel).Error; err != nil {

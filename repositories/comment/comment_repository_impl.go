@@ -69,7 +69,7 @@ func (r commentRepository) CreateComment(comment entities.Comment) (entities.Com
 		return entities.Comment{}, err
 	}
 
-	if err := r.db.Create(&commentModel).Preload("User", func(db *gorm.DB) *gorm.DB {
+	if err := r.db.Omit("User").Create(&commentModel).Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Credential")
 	}).Find(&commentModel).Error; err != nil {
 		return entities.Comment{}, err
@@ -95,7 +95,7 @@ func (r commentRepository) UpdateComment(comment entities.Comment, currUserID st
 			return constants.ErrAccessNotAllowed
 		}
 
-		if err := tx.Updates(&commentModel).Error; err != nil {
+		if err := tx.Omit("User").Updates(&commentModel).Error; err != nil {
 			return err
 		}
 
