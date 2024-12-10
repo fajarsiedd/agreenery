@@ -6,16 +6,17 @@ import (
 
 type User struct {
 	Base
-	DisplayName  string
-	Phone        string `gorm:"unique"`
-	Photo        string
-	CredentialID string     `gorm:"size:191"`
-	Credential   Credential `gorm:"foreignKey:CredentialID;references:ID"`
-	Posts        ListPost
-	Comments     ListComment
-	Likes        ListLike
-	Article      ListArticle
-	PostReport   ListPostReport
+	DisplayName    string
+	Phone          string `gorm:"unique"`
+	Photo          string
+	CredentialID   string     `gorm:"size:191"`
+	Credential     Credential `gorm:"foreignKey:CredentialID;references:ID"`
+	Posts          ListPost
+	Comments       ListComment
+	Likes          ListLike
+	Articles       ListArticle
+	PostReports    ListPostReport
+	Noitifications ListUserNotification
 }
 
 func (u User) FromEntity(user entities.User) User {
