@@ -50,11 +50,11 @@ const (
 	DeleteEnrollmentSuccess          string = "enrollment deleted successfully"
 
 	// POST
-	GetPostsSuccess   string = "posts retreived successfully"
-	GetPostSuccess    string = "post retreived successfully"
-	UpdatePostSuccess string = "post updated successfully"
-	DeletePostSuccess string = "post deleted successfully"
-	CreatePostSuccess string = "new post created successfully"
+	GetPostsSuccess     string = "posts retreived successfully"
+	GetPostSuccess      string = "post retreived successfully"
+	UpdatePostSuccess   string = "post updated successfully"
+	DeletePostSuccess   string = "post deleted successfully"
+	CreatePostSuccess   string = "new post created successfully"
 	TrendingPostSuccess string = "trending posts retreived successfully"
 
 	// COMMENT
@@ -72,4 +72,9 @@ const (
 	UpdateArticleSuccess string = "article updated successfully"
 	DeleteArticleSuccess string = "article deleted successfully"
 	CreateArticleSuccess string = "new article created successfully"
+
+	// POST REPORT
+	GetPostReportsSuccess   string = "post reports retreived successfully"
+	DeletePostReportSuccess string = "post report deleted successfully"
+	CreatePostReportSuccess string = "new post report created successfully"
 )

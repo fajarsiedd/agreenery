@@ -7,7 +7,7 @@ type PostRepository interface {
 	GetPost(id, currUserID string) (entities.Post, error)
 	CreatePost(post entities.Post) (entities.Post, error)
 	UpdatePost(post entities.Post, currUserID string) (entities.Post, error)
-	DeletePost(id, currUserID string) (string, error)
+	DeletePost(id, currUserID string, isAdmin bool) (string, error)
 	LikePost(id, currUserID string) (entities.Post, error)
-	GetPostsCountByCategory() ([]entities.Category, error)
+	GetPostsCountByCategory() ([]entities.Category, error)	
 }

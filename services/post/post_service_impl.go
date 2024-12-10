@@ -103,8 +103,8 @@ func (s postService) UpdatePost(post entities.Post, currUserID string) (entities
 	return result, nil
 }
 
-func (s postService) DeletePost(id, currUserID string) error {
-	media, err := s.repository.DeletePost(id, currUserID)
+func (s postService) DeletePost(id, currUserID string, isAdmin bool) error {
+	media, err := s.repository.DeletePost(id, currUserID, isAdmin)
 	if err != nil {
 		return err
 	}

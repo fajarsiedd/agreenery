@@ -17,6 +17,7 @@ type Post struct {
 	Likes         ListLike
 	CountLikes    int64 `gorm:"->;-:migration"`
 	IsLiked       bool  `gorm:"->;-:migration"`
+	PostReport    ListPostReport
 }
 
 type ListPost []Post

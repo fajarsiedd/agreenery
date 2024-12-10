@@ -15,6 +15,7 @@ type User struct {
 	Comments     ListComment
 	Likes        ListLike
 	Article      ListArticle
+	PostReport   ListPostReport
 }
 
 func (u User) FromEntity(user entities.User) User {

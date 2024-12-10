@@ -151,7 +151,7 @@ func (r postRepository) UpdatePost(post entities.Post, currUserID string) (entit
 	return postModel.ToEntity(), nil
 }
 
-func (r postRepository) DeletePost(id, currUserID string) (string, error) {
+func (r postRepository) DeletePost(id, currUserID string, isAdmin bool) (string, error) {
 	postModel := models.Post{}
 
 	var media string
@@ -163,7 +163,7 @@ func (r postRepository) DeletePost(id, currUserID string) (string, error) {
 
 		media = postDb.Media
 
-		if postDb.UserID != currUserID {
+		if !isAdmin && postDb.UserID != currUserID {
 			return constants.ErrAccessNotAllowed
 		}
 

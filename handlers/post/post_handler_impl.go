@@ -169,7 +169,9 @@ func (h postHandler) DeletePost(c echo.Context) error {
 		return base.ErrorResponse(c, err)
 	}
 
-	if err := h.service.DeletePost(id, claims.UserID); err != nil {
+	isAdmin := claims.Role == "admin"
+
+	if err := h.service.DeletePost(id, claims.UserID, isAdmin); err != nil {
 		return base.ErrorResponse(c, err)
 	}
 

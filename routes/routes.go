@@ -8,6 +8,7 @@ import (
 	enrollmentHandler "go-agreenery/handlers/enrollment"
 	plantHandler "go-agreenery/handlers/plant"
 	postHandler "go-agreenery/handlers/post"
+	reportHandler "go-agreenery/handlers/post_report"
 	regionHandler "go-agreenery/handlers/region"
 	stepHandler "go-agreenery/handlers/step"
 	weatherHandler "go-agreenery/handlers/weather"
@@ -19,6 +20,7 @@ import (
 	enrollmentRepo "go-agreenery/repositories/enrollment"
 	plantRepo "go-agreenery/repositories/plant"
 	postRepo "go-agreenery/repositories/post"
+	reportRepo "go-agreenery/repositories/post_report"
 	stepRepo "go-agreenery/repositories/step"
 	articleService "go-agreenery/services/article"
 	authService "go-agreenery/services/auth"
@@ -27,6 +29,7 @@ import (
 	enrollmentService "go-agreenery/services/enrollment"
 	plantService "go-agreenery/services/plant"
 	postService "go-agreenery/services/post"
+	reportService "go-agreenery/services/post_report"
 	regionService "go-agreenery/services/region"
 	stepService "go-agreenery/services/step"
 	weatherService "go-agreenery/services/weather"
@@ -93,6 +96,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initCommentRoute(e, db, jwtMiddlewareConfig)
 
 	initArticleRoute(e, db, jwtMiddlewareConfig)
+
+	initPostReportRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -225,4 +230,15 @@ func initArticleRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Con
 	article.GET("/:id", handler.GetArticle)
 	article.PUT("/:id", handler.UpdateArticle, middlewares.AdminOnly())
 	article.DELETE("/:id", handler.DeleteArticle, middlewares.AdminOnly())
+}
+
+func initPostReportRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := reportRepo.NewPostReportRepository(db)
+	service := reportService.NewPostReportService(repository)
+	handler := reportHandler.NewPostReportHandler(service)
+
+	report := e.Group("/api/v1/reports", echojwt.WithConfig(jwtMiddlewareConfig), middlewares.AdminOnly())
+	report.POST("", handler.CreatePostReport)
+	report.GET("", handler.GetPostReports)
+	report.DELETE("/:id", handler.DeletePostReport)
 }
