@@ -32,7 +32,7 @@ func (r articleRepository) GetArticles(filter entities.Filter) ([]entities.Artic
 	}
 
 	if filter.Category != "" {
-		query = query.InnerJoins("Category").Where("Category.Name = ?", filter.Category)
+		query = query.Joins("INNER JOIN categories ON posts.category_id = categories.id").Where("categories.name = ?", filter.Category)
 	}
 
 	if filter.Search != "" {

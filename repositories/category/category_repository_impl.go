@@ -71,7 +71,7 @@ func (r categoryRepository) GetCategory(id string) (entities.Category, error) {
 func (r categoryRepository) CreateCategory(category entities.Category) (entities.Category, error) {
 	categoryModel := models.Category{}.FromEntity(category)
 
-	if err := r.db.Create(&categoryModel).Error; err != nil {
+	if err := r.db.Omit("CountPosts").Create(&categoryModel).Error; err != nil {
 		return entities.Category{}, err
 	}
 
@@ -81,7 +81,7 @@ func (r categoryRepository) CreateCategory(category entities.Category) (entities
 func (r categoryRepository) UpdateCategory(category entities.Category) (entities.Category, error) {
 	categoryModel := models.Category{}.FromEntity(category)
 
-	if err := r.db.Updates(&categoryModel).Error; err != nil {
+	if err := r.db.Omit("CountPosts").Updates(&categoryModel).Error; err != nil {
 		return entities.Category{}, err
 	}
 

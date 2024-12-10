@@ -44,12 +44,14 @@ func (s postService) CreatePost(post entities.Post) (entities.Post, error) {
 
 	result, err := s.repository.CreatePost(post)
 	if err != nil {
-		var object string
-		splittedStr := strings.Split(url, "/")
-		object = splittedStr[len(splittedStr)-1]
+		if post.MediaFile != nil {
+			var object string
+			splittedStr := strings.Split(url, "/")
+			object = splittedStr[len(splittedStr)-1]
 
-		if err := helpers.DeleteFile(object); err != nil {
-			return entities.Post{}, err
+			if err := helpers.DeleteFile(object); err != nil {
+				return entities.Post{}, err
+			}
 		}
 
 		return entities.Post{}, err
@@ -89,12 +91,14 @@ func (s postService) UpdatePost(post entities.Post, currUserID string) (entities
 
 	result, err := s.repository.UpdatePost(post, currUserID)
 	if err != nil {
-		var object string
-		splittedStr := strings.Split(url, "/")
-		object = splittedStr[len(splittedStr)-1]
+		if post.MediaFile != nil {
+			var object string
+			splittedStr := strings.Split(url, "/")
+			object = splittedStr[len(splittedStr)-1]
 
-		if err := helpers.DeleteFile(object); err != nil {
-			return entities.Post{}, err
+			if err := helpers.DeleteFile(object); err != nil {
+				return entities.Post{}, err
+			}
 		}
 
 		return entities.Post{}, err
