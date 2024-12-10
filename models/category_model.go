@@ -12,7 +12,7 @@ type Category struct {
 	Plants     ListPlant
 	Article    ListArticle
 	Posts      ListPost
-	CountPosts int64 `gorm:"->;-:migration"`
+	CountPosts int64 `gorm:"-"`
 }
 
 type ListCategory []Category

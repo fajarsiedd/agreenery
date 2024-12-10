@@ -13,10 +13,10 @@ type Post struct {
 	CategoryID    string   `gorm:"size:191"`
 	Category      Category `gorm:"foreignKey:CategoryID;references:ID"`
 	Comments      ListComment
-	CountComments int64 `gorm:"->;-:migration"`
+	CountComments int64 `gorm:"-"`
 	Likes         ListLike
-	CountLikes    int64 `gorm:"->;-:migration"`
-	IsLiked       bool  `gorm:"->;-:migration"`
+	CountLikes    int64 `gorm:"-"`
+	IsLiked       bool  `gorm:"-"`
 	PostReport    ListPostReport
 }
 
