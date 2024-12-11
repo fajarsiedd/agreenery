@@ -32,7 +32,7 @@ func (r articleRepository) GetArticles(filter entities.Filter) ([]entities.Artic
 	}
 
 	if filter.Category != "" {
-		query = query.InnerJoins("Category").Where("Category.Name = ?", filter.Category)
+		query = query.Joins("INNER JOIN categories ON posts.category_id = categories.id").Where("categories.name = ?", filter.Category)
 	}
 
 	if filter.Search != "" {
@@ -84,7 +84,7 @@ func (r articleRepository) GetArticle(id string) (entities.Article, error) {
 func (r articleRepository) CreateArticle(article entities.Article) (entities.Article, error) {
 	articleModel := models.Article{}.FromEntity(article)
 
-	if err := r.db.Create(&articleModel).Preload("Category").Preload("User", func(db *gorm.DB) *gorm.DB {
+	if err := r.db.Omit("User", "Category").Create(&articleModel).Preload("Category").Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Credential")
 	}).Find(&articleModel).Error; err != nil {
 		return entities.Article{}, err
@@ -96,7 +96,7 @@ func (r articleRepository) CreateArticle(article entities.Article) (entities.Art
 func (r articleRepository) UpdateArticle(article entities.Article) (entities.Article, error) {
 	articleModel := models.Article{}.FromEntity(article)
 
-	if err := r.db.Updates(&articleModel).Preload("Category").Preload("User", func(db *gorm.DB) *gorm.DB {
+	if err := r.db.Omit("User", "Category").Updates(&articleModel).Preload("Category").Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Credential")
 	}).Find(&articleModel).Error; err != nil {
 		return entities.Article{}, err

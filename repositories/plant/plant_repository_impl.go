@@ -20,10 +20,10 @@ func NewPlantRepository(db *gorm.DB) *plantRepository {
 func (r plantRepository) GetPlants(filter entities.Filter) ([]entities.Plant, entities.Pagination, error) {
 	plantModel := models.ListPlant{}
 
-	query := r.db.Model(&plantModel)
+	query := r.db.Debug().Model(&plantModel)
 
 	if filter.Category != "" {
-		query = query.InnerJoins("Category").Where("Category.Name = ?", filter.Category)
+		query = query.Joins("INNER JOIN categories ON plants.category_id = categories.id").Where("categories.name = ?", filter.Category)
 	}
 
 	if filter.Search != "" {
@@ -74,7 +74,7 @@ func (r plantRepository) GetPlant(id string) (entities.Plant, error) {
 func (r plantRepository) CreatePlant(plant entities.Plant) (entities.Plant, error) {
 	plantModel := models.Plant{}.FromEntity(plant)
 
-	if err := r.db.Create(&plantModel).Preload("Category").Find(&plantModel).Error; err != nil {
+	if err := r.db.Omit("Category").Create(&plantModel).Preload("Category").Find(&plantModel).Error; err != nil {
 		return entities.Plant{}, err
 	}
 
@@ -84,7 +84,7 @@ func (r plantRepository) CreatePlant(plant entities.Plant) (entities.Plant, erro
 func (r plantRepository) UpdatePlant(plant entities.Plant) (entities.Plant, error) {
 	plantModel := models.Plant{}.FromEntity(plant)
 
-	if err := r.db.Updates(&plantModel).Preload("Category").Preload("Steps", func(db *gorm.DB) *gorm.DB {
+	if err := r.db.Omit("Category").Updates(&plantModel).Preload("Category").Preload("Steps", func(db *gorm.DB) *gorm.DB {
 		db = db.Order("created_at ASC")
 		return db
 	}).Find(&plantModel).Error; err != nil {

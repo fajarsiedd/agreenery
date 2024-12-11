@@ -8,8 +8,10 @@ import (
 	enrollmentHandler "go-agreenery/handlers/enrollment"
 	plantHandler "go-agreenery/handlers/plant"
 	postHandler "go-agreenery/handlers/post"
+	reportHandler "go-agreenery/handlers/post_report"
 	regionHandler "go-agreenery/handlers/region"
 	stepHandler "go-agreenery/handlers/step"
+	userNotifHandler "go-agreenery/handlers/user_notification"
 	weatherHandler "go-agreenery/handlers/weather"
 	"go-agreenery/middlewares"
 	articleRepo "go-agreenery/repositories/article"
@@ -19,7 +21,9 @@ import (
 	enrollmentRepo "go-agreenery/repositories/enrollment"
 	plantRepo "go-agreenery/repositories/plant"
 	postRepo "go-agreenery/repositories/post"
+	reportRepo "go-agreenery/repositories/post_report"
 	stepRepo "go-agreenery/repositories/step"
+	userNotifRepo "go-agreenery/repositories/user_notification"
 	articleService "go-agreenery/services/article"
 	authService "go-agreenery/services/auth"
 	categoryService "go-agreenery/services/category"
@@ -27,8 +31,10 @@ import (
 	enrollmentService "go-agreenery/services/enrollment"
 	plantService "go-agreenery/services/plant"
 	postService "go-agreenery/services/post"
+	reportService "go-agreenery/services/post_report"
 	regionService "go-agreenery/services/region"
 	stepService "go-agreenery/services/step"
+	userNotifService "go-agreenery/services/user_notification"
 	weatherService "go-agreenery/services/weather"
 	"os"
 	"time"
@@ -93,6 +99,10 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initCommentRoute(e, db, jwtMiddlewareConfig)
 
 	initArticleRoute(e, db, jwtMiddlewareConfig)
+
+	initPostReportRoute(e, db, jwtMiddlewareConfig)
+
+	initUserNotificationRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -225,4 +235,29 @@ func initArticleRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Con
 	article.GET("/:id", handler.GetArticle)
 	article.PUT("/:id", handler.UpdateArticle, middlewares.AdminOnly())
 	article.DELETE("/:id", handler.DeleteArticle, middlewares.AdminOnly())
+}
+
+func initPostReportRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := reportRepo.NewPostReportRepository(db)
+	service := reportService.NewPostReportService(repository)
+	handler := reportHandler.NewPostReportHandler(service)
+
+	report := e.Group("/api/v1/reports", echojwt.WithConfig(jwtMiddlewareConfig))
+	report.POST("", handler.CreatePostReport)
+	report.GET("", handler.GetPostReports, middlewares.AdminOnly())
+	report.DELETE("/:id", handler.DeletePostReport, middlewares.AdminOnly())
+	report.POST("/:id/delete-post", handler.DeletePostWithMessage, middlewares.AdminOnly())
+	report.POST("/:id/send-warning", handler.SendWarning, middlewares.AdminOnly())
+}
+
+func initUserNotificationRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := userNotifRepo.NewUserNotificationRepository(db)
+	service := userNotifService.NewUserNotificationService(repository)
+	handler := userNotifHandler.NewUserNotificationHandler(service)
+
+	userNotif := e.Group("/api/v1/notifications/user", echojwt.WithConfig(jwtMiddlewareConfig))
+	userNotif.POST("/:id/read", handler.MarkNotificationAsRead)
+	userNotif.POST("/read", handler.MarkAllNotificationsAsRead)
+	userNotif.GET("", handler.GetUserNotifications)
+	userNotif.DELETE("/:id", handler.DeleteNotification)
 }

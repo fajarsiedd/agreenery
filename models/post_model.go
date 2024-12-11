@@ -13,10 +13,10 @@ type Post struct {
 	CategoryID    string   `gorm:"size:191"`
 	Category      Category `gorm:"foreignKey:CategoryID;references:ID"`
 	Comments      ListComment
-	CountComments int64 `gorm:"->;-:migration"`
+	CountComments int64 `gorm:"<-:false;-:migration"`
 	Likes         ListLike
-	CountLikes    int64 `gorm:"->;-:migration"`
-	IsLiked       bool  `gorm:"->;-:migration"`
+	CountLikes    int64 `gorm:"<-:false;-:migration"`
+	IsLiked       bool  `gorm:"<-:false;-:migration"`
 }
 
 type ListPost []Post
@@ -52,10 +52,10 @@ func (p Post) ToEntity() entities.Post {
 	}
 }
 
-func (lp ListPost) FromListEntity(categories []entities.Post) ListPost {
+func (lp ListPost) FromListEntity(posts []entities.Post) ListPost {
 	data := ListPost{}
 
-	for _, v := range categories {
+	for _, v := range posts {
 		data = append(data, Post{}.FromEntity(v))
 	}
 

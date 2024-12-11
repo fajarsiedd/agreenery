@@ -44,12 +44,14 @@ func (s articleService) CreateArticle(article entities.Article) (entities.Articl
 
 	result, err := s.repository.CreateArticle(article)
 	if err != nil {
-		var object string
-		splittedStr := strings.Split(url, "/")
-		object = splittedStr[len(splittedStr)-1]
+		if article.ThumbnailFile != nil {
+			var object string
+			splittedStr := strings.Split(url, "/")
+			object = splittedStr[len(splittedStr)-1]
 
-		if err := helpers.DeleteFile(object); err != nil {
-			return entities.Article{}, err
+			if err := helpers.DeleteFile(object); err != nil {
+				return entities.Article{}, err
+			}
 		}
 
 		return entities.Article{}, err
@@ -89,12 +91,14 @@ func (s articleService) UpdateArticle(article entities.Article) (entities.Articl
 
 	result, err := s.repository.UpdateArticle(article)
 	if err != nil {
-		var object string
-		splittedStr := strings.Split(url, "/")
-		object = splittedStr[len(splittedStr)-1]
+		if article.ThumbnailFile != nil {
+			var object string
+			splittedStr := strings.Split(url, "/")
+			object = splittedStr[len(splittedStr)-1]
 
-		if err := helpers.DeleteFile(object); err != nil {
-			return entities.Article{}, err
+			if err := helpers.DeleteFile(object); err != nil {
+				return entities.Article{}, err
+			}
 		}
 
 		return entities.Article{}, err

@@ -14,5 +14,5 @@ type Filter struct {
 	Category      string
 	CategoryType  string
 	PostID        string
-	PublishStatus string
+	PublishStatus string	
 }

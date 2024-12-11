@@ -38,10 +38,10 @@ func (p Plant) ToEntity() entities.Plant {
 	}
 }
 
-func (lp ListPlant) FromListEntity(categories []entities.Plant) ListPlant {
+func (lp ListPlant) FromListEntity(plants []entities.Plant) ListPlant {
 	data := ListPlant{}
 
-	for _, v := range categories {
+	for _, v := range plants {
 		data = append(data, Plant{}.FromEntity(v))
 	}
 

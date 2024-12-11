@@ -1,6 +1,7 @@
 package comment
 
 import (
+	"database/sql"
 	"go-agreenery/constants"
 	"go-agreenery/entities"
 	"go-agreenery/models"
@@ -65,13 +66,72 @@ func (r commentRepository) GetComments(filter entities.Filter) ([]entities.Comme
 func (r commentRepository) CreateComment(comment entities.Comment) (entities.Comment, error) {
 	commentModel := models.Comment{}.FromEntity(comment)
 
-	if err := r.db.First(&models.Post{}, &comment.PostID).Error; err != nil {
-		return entities.Comment{}, err
-	}
+	err := r.db.Transaction(func(tx *gorm.DB) error {
+		postModel := models.Post{}
+		if err := tx.Preload("User").First(&postModel, &comment.PostID).Error; err != nil {
+			return err
+		}
 
-	if err := r.db.Create(&commentModel).Preload("User", func(db *gorm.DB) *gorm.DB {
-		return db.Preload("Credential")
-	}).Find(&commentModel).Error; err != nil {
+		if err := tx.Omit("User").Create(&commentModel).Preload("User", func(db *gorm.DB) *gorm.DB {
+			return db.Preload("Credential")
+		}).Find(&commentModel).Error; err != nil {
+			return err
+		}
+
+		// CREATE NOTIFICATION
+		userIDs := []string{}
+		if err := tx.Model(&models.Comment{}).Where("post_id = ?", comment.PostID).Distinct().Pluck("user_id", &userIDs).Error; err != nil {
+			return err
+		}
+
+		currUser := models.User{}
+		if err := tx.First(&currUser, &comment.UserID).Error; err != nil {
+			return err
+		}
+
+		// NOTIFY THE OWNER OF THE POST
+		if currUser.ID != postModel.UserID {
+			userNotifModel := &models.UserNotification{}
+
+			userNotifModel.PostID = sql.NullString{String: comment.PostID, Valid: true}
+			userNotifModel.CommentID = sql.NullString{String: commentModel.ID, Valid: true}
+			userNotifModel.UserID = postModel.UserID
+			userNotifModel.Subtitle = comment.Message
+			userNotifModel.ActionURL = postModel.ID
+			userNotifModel.Icon = currUser.Photo
+			userNotifModel.Title = currUser.DisplayName + constants.UserCommentedPost
+
+			if err := tx.Create(&userNotifModel).Error; err != nil {
+				return err
+			}
+		}
+
+		// NOTIFY ALL USER THAT COMMENTED THE POST
+		for _, userID := range userIDs {
+			if userID != currUser.ID && userID != postModel.UserID {
+				userNotifModel := &models.UserNotification{}
+
+				userNotifModel.PostID = sql.NullString{String: comment.PostID, Valid: true}
+				userNotifModel.CommentID = sql.NullString{String: commentModel.ID, Valid: true}
+				userNotifModel.UserID = userID
+				userNotifModel.Subtitle = comment.Message
+				userNotifModel.ActionURL = postModel.ID
+				userNotifModel.Icon = currUser.Photo
+				if currUser.ID == postModel.UserID {
+					userNotifModel.Title = currUser.DisplayName + constants.SelfCommentedPost
+				} else {
+					userNotifModel.Title = currUser.DisplayName + constants.OtherUserCommentedPost + postModel.User.DisplayName
+				}
+
+				if err := tx.Create(&userNotifModel).Error; err != nil {
+					return err
+				}
+			}
+		}
+
+		return nil
+	})
+	if err != nil {
 		return entities.Comment{}, err
 	}
 
@@ -95,7 +155,7 @@ func (r commentRepository) UpdateComment(comment entities.Comment, currUserID st
 			return constants.ErrAccessNotAllowed
 		}
 
-		if err := tx.Updates(&commentModel).Error; err != nil {
+		if err := tx.Omit("User").Updates(&commentModel).Error; err != nil {
 			return err
 		}
 

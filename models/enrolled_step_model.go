@@ -35,10 +35,10 @@ func (p EnrolledStep) ToEntity() entities.EnrolledStep {
 	}
 }
 
-func (lp ListEnrolledStep) FromListEntity(categories []entities.EnrolledStep) ListEnrolledStep {
+func (lp ListEnrolledStep) FromListEntity(steps []entities.EnrolledStep) ListEnrolledStep {
 	data := ListEnrolledStep{}
 
-	for _, v := range categories {
+	for _, v := range steps {
 		data = append(data, EnrolledStep{}.FromEntity(v))
 	}
 

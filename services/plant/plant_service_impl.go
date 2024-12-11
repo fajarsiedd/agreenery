@@ -44,12 +44,14 @@ func (s plantService) CreatePlant(plant entities.Plant) (entities.Plant, error) 
 
 	result, err := s.repository.CreatePlant(plant)
 	if err != nil {
-		var object string
-		splittedStr := strings.Split(url, "/")
-		object = splittedStr[len(splittedStr)-1]
+		if plant.ImageFile != nil {
+			var object string
+			splittedStr := strings.Split(url, "/")
+			object = splittedStr[len(splittedStr)-1]
 
-		if err := helpers.DeleteFile(object); err != nil {
-			return entities.Plant{}, err
+			if err := helpers.DeleteFile(object); err != nil {
+				return entities.Plant{}, err
+			}
 		}
 
 		return entities.Plant{}, err
@@ -89,12 +91,14 @@ func (s plantService) UpdatePlant(plant entities.Plant) (entities.Plant, error) 
 
 	result, err := s.repository.UpdatePlant(plant)
 	if err != nil {
-		var object string
-		splittedStr := strings.Split(url, "/")
-		object = splittedStr[len(splittedStr)-1]
+		if plant.ImageFile != nil {
+			var object string
+			splittedStr := strings.Split(url, "/")
+			object = splittedStr[len(splittedStr)-1]
 
-		if err := helpers.DeleteFile(object); err != nil {
-			return entities.Plant{}, err
+			if err := helpers.DeleteFile(object); err != nil {
+				return entities.Plant{}, err
+			}
 		}
 
 		return entities.Plant{}, err
