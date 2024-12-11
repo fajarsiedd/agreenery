@@ -86,4 +86,7 @@ const (
 	CreateNotificationSuccess        string = "new notification created successfully"
 	MarkNotificationAsReadSuccess    string = "notification marked as read successfully"
 	MarkAllNotificationAsReadSuccess string = "all notifications marked as read successfully"
+
+	// CHATBOT
+	SendPromptSuccess string = "response generated successfully"
 )

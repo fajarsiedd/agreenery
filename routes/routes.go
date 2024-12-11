@@ -4,6 +4,7 @@ import (
 	articleHandler "go-agreenery/handlers/article"
 	authHandler "go-agreenery/handlers/auth"
 	categoryHandler "go-agreenery/handlers/category"
+	chatbotHandler "go-agreenery/handlers/chatbot"
 	commentHandler "go-agreenery/handlers/comment"
 	enrollmentHandler "go-agreenery/handlers/enrollment"
 	plantHandler "go-agreenery/handlers/plant"
@@ -103,6 +104,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initPostReportRoute(e, db, jwtMiddlewareConfig)
 
 	initUserNotificationRoute(e, db, jwtMiddlewareConfig)
+
+	initChatbotRoute(e, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -260,4 +263,11 @@ func initUserNotificationRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig ec
 	userNotif.POST("/read", handler.MarkAllNotificationsAsRead)
 	userNotif.GET("", handler.GetUserNotifications)
 	userNotif.DELETE("/:id", handler.DeleteNotification)
+}
+
+func initChatbotRoute(e *echo.Echo, jwtMiddlewareConfig echojwt.Config) {
+	handler := chatbotHandler.NewChatbotHandler()
+
+	userNotif := e.Group("/api/v1/chatbot", echojwt.WithConfig(jwtMiddlewareConfig))
+	userNotif.POST("", handler.SendPrompt)
 }

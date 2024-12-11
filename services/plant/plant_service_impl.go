@@ -42,6 +42,12 @@ func (s plantService) CreatePlant(plant entities.Plant) (entities.Plant, error) 
 
 	plant.Image = url
 
+	// GET RECOMMENDATION FROM AI
+	fertilizer, tips := helpers.GetFertilzerAndPlantingRecommendation(plant.Name)
+
+	plant.Fertilizer = fertilizer
+	plant.PlantingTips = tips
+
 	result, err := s.repository.CreatePlant(plant)
 	if err != nil {
 		if plant.ImageFile != nil {
@@ -88,6 +94,12 @@ func (s plantService) UpdatePlant(plant entities.Plant) (entities.Plant, error) 
 	}
 
 	plant.Image = url
+
+	// GET RECOMMENDATION FROM AI
+	fertilizer, tips := helpers.GetFertilzerAndPlantingRecommendation(plant.Name)
+
+	plant.Fertilizer = fertilizer
+	plant.PlantingTips = tips
 
 	result, err := s.repository.UpdatePlant(plant)
 	if err != nil {
