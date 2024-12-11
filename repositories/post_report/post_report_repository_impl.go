@@ -77,3 +77,87 @@ func (r postReportRepository) DeletePostReport(id string) error {
 
 	return nil
 }
+
+func (r postReportRepository) DeletePostWithMessage(postReport entities.PostReport) (string, error) {
+	var media string
+	err := r.db.Transaction(func(tx *gorm.DB) error {
+		postReportModel := models.PostReport{}
+		if err := r.db.First(&postReportModel, &postReport.ID).Error; err != nil {
+			return err
+		}
+
+		postDb := models.Post{}
+		if err := tx.First(&postDb, &postReportModel.PostID).Error; err != nil {
+			return err
+		}
+
+		media = postDb.Media
+
+		if err := tx.Unscoped().Where("post_id = ?", postReportModel.PostID).Delete(&models.Comment{}).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Unscoped().Where("post_id = ?", postReportModel.PostID).Delete(&models.Like{}).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Unscoped().Delete(&postDb).Error; err != nil {
+			return err
+		}
+
+		// CREATE NOTIFICATION
+		userNotifModel := models.UserNotification{
+			UserID:   postDb.UserID,
+			Title:    "Pelanggaran Aturan: Postingan Anda telah dihapus",
+			Subtitle: postReport.Message,
+			Icon:     "https://storage.googleapis.com/agreenery/uploads/agreenery-logo.png",
+		}
+		if err := tx.Create(&userNotifModel).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Model(&postReportModel).Where("id = ?", postReport.ID).Update("status_done", true).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return "", err
+	}
+
+	return media, nil
+}
+
+func (r postReportRepository) SendWarning(postReport entities.PostReport) error {
+	return r.db.Transaction(func(tx *gorm.DB) error {
+		postReportModel := models.PostReport{}
+		if err := r.db.First(&postReportModel, &postReport.ID).Error; err != nil {
+			return err
+		}
+
+		postDb := models.Post{}
+		if err := tx.First(&postDb, &postReportModel.PostID).Error; err != nil {
+			return err
+		}
+
+		// CREATE NOTIFICATION
+		userNotifModel := models.UserNotification{
+			UserID:   postDb.UserID,
+			Title:    "Peringatan: " + postReportModel.ReportType,
+			Subtitle: postReport.Message,
+			Icon:     "https://storage.googleapis.com/agreenery/uploads/agreenery-logo.png",
+		}
+
+		if err := tx.Create(&userNotifModel).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Model(&postReportModel).Where("id = ?", postReport.ID).Update("status_done", true).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+}

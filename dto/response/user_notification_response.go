@@ -11,6 +11,7 @@ type UserNotificationResponse struct {
 	Subtitle  string `json:"subtitle"`
 	ActionURL string `json:"action_url"`
 	IsRead    bool   `json:"is_read"`
+	Icon      string `json:"icon"`
 }
 
 type ListUserNotificationResponse []UserNotificationResponse
@@ -22,6 +23,7 @@ func (r UserNotificationResponse) FromEntity(userNotification entities.UserNotif
 		Subtitle:  userNotification.Subtitle,
 		ActionURL: userNotification.ActionURL,
 		IsRead:    userNotification.IsRead,
+		Icon:      userNotification.Icon,
 	}
 }
 

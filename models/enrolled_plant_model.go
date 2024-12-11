@@ -35,10 +35,10 @@ func (p EnrolledPlant) ToEntity() entities.EnrolledPlant {
 	}
 }
 
-func (lp ListEnrolledPlant) FromListEntity(categories []entities.EnrolledPlant) ListEnrolledPlant {
+func (lp ListEnrolledPlant) FromListEntity(plants []entities.EnrolledPlant) ListEnrolledPlant {
 	data := ListEnrolledPlant{}
 
-	for _, v := range categories {
+	for _, v := range plants {
 		data = append(data, EnrolledPlant{}.FromEntity(v))
 	}
 

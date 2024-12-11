@@ -1,14 +1,17 @@
 package models
 
-import "go-agreenery/entities"
+import (
+	"database/sql"
+	"go-agreenery/entities"
+)
 
 type PostReport struct {
 	Base
-	UserID     string `gorm:"size:191"`
-	User       User   `gorm:"foreignKey:UserID;references:ID"`
-	PostID     string `gorm:"size:191"`
-	ReportType string `gorm:"size:255"`
-	StatusDone bool   `gorm:"default:false"`
+	UserID     string         `gorm:"size:191"`
+	User       User           `gorm:"foreignKey:UserID;references:ID"`
+	PostID     sql.NullString `gorm:"size:191"`
+	ReportType string         `gorm:"size:255"`
+	StatusDone bool           `gorm:"default:false"`
 }
 
 type ListPostReport []PostReport
@@ -35,10 +38,10 @@ func (p PostReport) ToEntity() entities.PostReport {
 	}
 }
 
-func (lp ListPostReport) FromListEntity(categories []entities.PostReport) ListPostReport {
+func (lp ListPostReport) FromListEntity(posts []entities.PostReport) ListPostReport {
 	data := ListPostReport{}
 
-	for _, v := range categories {
+	for _, v := range posts {
 		data = append(data, PostReport{}.FromEntity(v))
 	}
 

@@ -1,6 +1,7 @@
 package post
 
 import (
+	"database/sql"
 	"go-agreenery/constants"
 	"go-agreenery/entities"
 	"go-agreenery/models"
@@ -198,16 +199,47 @@ func (r postRepository) LikePost(id, currUserID string) (entities.Post, error) {
 		}
 
 		var likeCount int64
-		if err := tx.Model(&models.Like{}).Where("post_id = ? AND user_id = ?", id, currUserID).Count(&likeCount).Error; err != nil {
+		if err := tx.Model(&models.ListLike{}).Where("post_id = ? AND user_id = ?", id, currUserID).Count(&likeCount).Error; err != nil {
 			return err
 		}
 
 		if likeCount == 0 {
-			if err := tx.Create(&models.Like{PostID: id, UserID: currUserID}).Error; err != nil {
+			likeModel := models.Like{PostID: id, UserID: currUserID}
+			if err := tx.Create(&likeModel).Error; err != nil {
 				return err
 			}
+
+			if currUserID != postModel.UserID {
+				// CREATE NOTIFICATION
+				currUser := models.User{}
+				if err := tx.First(&currUser, &currUserID).Error; err != nil {
+					return err
+				}
+
+				userNotifModel := models.UserNotification{
+					PostID:    sql.NullString{String: id, Valid: true},
+					LikeID:    sql.NullString{String: likeModel.ID, Valid: true},
+					UserID:    postModel.UserID,
+					Title:     currUser.DisplayName + constants.UserLikedPost,
+					Subtitle:  constants.GeneralSubtitle,
+					ActionURL: id,
+					Icon:      currUser.Photo,
+				}
+				if err := tx.Create(&userNotifModel).Error; err != nil {
+					return err
+				}
+			}
 		} else {
-			if err := tx.Unscoped().Where("post_id = ? AND user_id = ?", id, currUserID).Delete(&models.Like{}).Error; err != nil {
+			likeDb := models.Like{}
+			if err := tx.Where("post_id = ? AND user_id = ?", id, currUserID).Find(&likeDb).Error; err != nil {
+				return err
+			}
+
+			if err := tx.Unscoped().Delete(&models.Like{}, &likeDb.ID).Error; err != nil {
+				return err
+			}
+
+			if err := tx.Unscoped().Where("post_id = ? AND user_id = ? AND like_id = ?", id, postModel.UserID, likeDb.ID).Delete(&models.UserNotification{}).Error; err != nil {
 				return err
 			}
 		}

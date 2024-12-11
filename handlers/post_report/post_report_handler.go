@@ -6,4 +6,6 @@ type PostReportRepository interface {
 	GetPostReports(c echo.Context) error
 	CreatePostReport(c echo.Context) error
 	DeletePostReport(c echo.Context) error
+	SendWarning(c echo.Context) error
+	DeletePostWithMessage(c echo.Context) error
 }

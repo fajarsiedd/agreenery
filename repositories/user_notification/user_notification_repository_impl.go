@@ -21,7 +21,7 @@ func NewUserNotificationRepository(db *gorm.DB) *userNotificationRepository {
 func (r userNotificationRepository) GetUserNotifications(filter entities.Filter) ([]entities.UserNotification, entities.Pagination, error) {
 	userNotificationModel := models.ListUserNotification{}
 
-	query := r.db.Model(&userNotificationModel)
+	query := r.db.Model(&userNotificationModel).Where("user_id = ?", filter.UserID)
 
 	if filter.Search != "" {
 		query = query.Where("user_notifications.title LIKE ?", "%"+filter.Search+"%")
@@ -94,7 +94,7 @@ func (r userNotificationRepository) MarkNotificationAsRead(id, currUserID string
 		return constants.ErrAccessNotAllowed
 	}
 
-	if err := r.db.Model(&userNotificationModel).Where("id = ?", id).Update("is_read = ?", true).Error; err != nil {
+	if err := r.db.Model(&userNotificationModel).Where("id = ?", id).Update("is_read", true).Error; err != nil {
 		return err
 	}
 
@@ -104,7 +104,7 @@ func (r userNotificationRepository) MarkNotificationAsRead(id, currUserID string
 func (r userNotificationRepository) MarkAllNotificationsAsRead(currUserID string) error {
 	userNotificationModel := models.UserNotification{}
 
-	if err := r.db.Model(&userNotificationModel).Where("user_id = ?", currUserID).Update("is_read = ?", true).Error; err != nil {
+	if err := r.db.Model(&userNotificationModel).Where("user_id = ?", currUserID).Update("is_read", true).Error; err != nil {
 		return err
 	}
 

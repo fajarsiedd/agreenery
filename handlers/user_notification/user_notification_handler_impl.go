@@ -28,6 +28,13 @@ func (h userNotificationHandler) GetUserNotifications(c echo.Context) error {
 		return base.ErrorResponse(c, err)
 	}
 
+	claims, _, err := middlewares.GetCurrentToken(c)
+	if err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	filter.UserID = claims.UserID
+
 	result, pagination, err := h.service.GetUserNotifications(filter)
 	if err != nil {
 		return base.ErrorResponse(c, err)
@@ -48,7 +55,7 @@ func (h userNotificationHandler) DeleteNotification(c echo.Context) error {
 		return base.ErrorResponse(c, err)
 	}
 
-	return base.SuccessResponse(c, constants.DeleteCategorySuccess, nil)
+	return base.SuccessResponse(c, constants.DeleteNotificationSuccess, nil)
 }
 
 func (h userNotificationHandler) MarkNotificationAsRead(c echo.Context) error {
@@ -59,7 +66,7 @@ func (h userNotificationHandler) MarkNotificationAsRead(c echo.Context) error {
 		return base.ErrorResponse(c, err)
 	}
 
-	if err := h.service.DeleteNotification(id, claims.UserID); err != nil {
+	if err := h.service.MarkNotificationAsRead(id, claims.UserID); err != nil {
 		return base.ErrorResponse(c, err)
 	}
 

@@ -77,6 +77,7 @@ const (
 	GetPostReportsSuccess   string = "post reports retreived successfully"
 	DeletePostReportSuccess string = "post report deleted successfully"
 	CreatePostReportSuccess string = "new post report created successfully"
+	SendWarningSuccess      string = "warning sent successfully"
 
 	// NOTIFICATION
 	SendNotificationSuccess          string = "notification sent successfully"

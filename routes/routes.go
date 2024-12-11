@@ -246,6 +246,8 @@ func initPostReportRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.
 	report.POST("", handler.CreatePostReport)
 	report.GET("", handler.GetPostReports, middlewares.AdminOnly())
 	report.DELETE("/:id", handler.DeletePostReport, middlewares.AdminOnly())
+	report.POST("/:id/delete-post", handler.DeletePostWithMessage, middlewares.AdminOnly())
+	report.POST("/:id/send-warning", handler.SendWarning, middlewares.AdminOnly())
 }
 
 func initUserNotificationRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {

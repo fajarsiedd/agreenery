@@ -80,3 +80,47 @@ func (h postReportHandler) DeletePostReport(c echo.Context) error {
 
 	return base.SuccessResponse(c, constants.DeletePostReportSuccess, nil)
 }
+
+func (h postReportHandler) SendWarning(c echo.Context) error {
+	id := c.Param("id")
+	req := request.PostReportActionRequest{}
+
+	if err := c.Bind(&req); err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	if err := c.Validate(&req); err != nil {
+		return base.ErrorResponse(c, helpers.TranslateValidationErr(err))
+	}
+
+	postReport := req.ToEntity()
+	postReport.ID = id
+
+	if err := h.service.SendWarning(postReport); err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	return base.SuccessResponse(c, constants.SendWarningSuccess, nil)
+}
+
+func (h postReportHandler) DeletePostWithMessage(c echo.Context) error {
+	id := c.Param("id")
+	req := request.PostReportActionRequest{}
+
+	if err := c.Bind(&req); err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	if err := c.Validate(&req); err != nil {
+		return base.ErrorResponse(c, helpers.TranslateValidationErr(err))
+	}
+
+	postReport := req.ToEntity()
+	postReport.ID = id
+
+	if err := h.service.DeletePostWithMessage(postReport); err != nil {
+		return base.ErrorResponse(c, err)
+	}
+
+	return base.SuccessResponse(c, constants.DeletePostSuccess, nil)
+}

@@ -13,6 +13,9 @@ type UserNotification struct {
 	ActionURL string         `gorm:"size:255"`
 	IsRead    bool           `gorm:"default:false"`
 	PostID    sql.NullString `gorm:"size:191"`
+	CommentID sql.NullString `gorm:"size:191"`
+	LikeID    sql.NullString `gorm:"size:191"`
+	Icon      string         `gorm:"size:255"`
 }
 
 type ListUserNotification []UserNotification
@@ -26,6 +29,9 @@ func (n UserNotification) FromEntity(userNotification entities.UserNotification)
 		ActionURL: userNotification.ActionURL,
 		IsRead:    userNotification.IsRead,
 		PostID:    userNotification.PostID,
+		LikeID:    userNotification.LikeID,
+		CommentID: userNotification.CommentID,
+		Icon:      userNotification.Icon,
 	}
 }
 
@@ -38,6 +44,9 @@ func (n UserNotification) ToEntity() entities.UserNotification {
 		ActionURL: n.ActionURL,
 		IsRead:    n.IsRead,
 		PostID:    n.PostID,
+		LikeID:    n.LikeID,
+		CommentID: n.CommentID,
+		Icon:      n.Icon,
 	}
 }
 

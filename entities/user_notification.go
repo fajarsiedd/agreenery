@@ -10,4 +10,7 @@ type UserNotification struct {
 	ActionURL string
 	IsRead    bool
 	PostID    sql.NullString
+	LikeID    sql.NullString
+	CommentID sql.NullString
+	Icon      string
 }

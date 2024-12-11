@@ -1,6 +1,7 @@
 package response
 
 import (
+	"database/sql"
 	"go-agreenery/dto/base"
 	"go-agreenery/entities"
 )
@@ -8,7 +9,7 @@ import (
 type PostReportResponse struct {
 	base.Base
 	User       ProfileResponse `json:"user"`
-	PostID     string          `json:"post_id"`
+	PostID     sql.NullString  `json:"post_id"`
 	ReportType string          `json:"report_type"`
 	StatusDone bool            `json:"status_done"`
 }

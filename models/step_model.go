@@ -32,10 +32,10 @@ func (s Step) ToEntity() entities.Step {
 	}
 }
 
-func (ls ListStep) FromListEntity(categories []entities.Step) ListStep {
+func (ls ListStep) FromListEntity(steps []entities.Step) ListStep {
 	data := ListStep{}
 
-	for _, v := range categories {
+	for _, v := range steps {
 		data = append(data, Step{}.FromEntity(v))
 	}
 

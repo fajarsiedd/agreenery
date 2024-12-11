@@ -17,7 +17,6 @@ type Post struct {
 	Likes         ListLike
 	CountLikes    int64 `gorm:"<-:false;-:migration"`
 	IsLiked       bool  `gorm:"<-:false;-:migration"`
-	PostReport    ListPostReport
 }
 
 type ListPost []Post
@@ -53,10 +52,10 @@ func (p Post) ToEntity() entities.Post {
 	}
 }
 
-func (lp ListPost) FromListEntity(categories []entities.Post) ListPost {
+func (lp ListPost) FromListEntity(posts []entities.Post) ListPost {
 	data := ListPost{}
 
-	for _, v := range categories {
+	for _, v := range posts {
 		data = append(data, Post{}.FromEntity(v))
 	}
 
