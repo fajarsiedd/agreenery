@@ -20,7 +20,7 @@ func NewNotificationRepository(db *gorm.DB) *notificationRepository {
 func (r notificationRepository) GetNotifications(filter entities.Filter) ([]entities.Notification, entities.Pagination, error) {
 	notificationModel := models.ListNotification{}
 
-	query := r.db.Debug().Model(&notificationModel)
+	query := r.db.Model(&notificationModel)
 
 	if filter.Search != "" {
 		query = query.Table("notifications").Where("notifications.title LIKE ?", "%"+filter.Search+"%")

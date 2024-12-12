@@ -20,7 +20,7 @@ func NewPlantRepository(db *gorm.DB) *plantRepository {
 func (r plantRepository) GetPlants(filter entities.Filter) ([]entities.Plant, entities.Pagination, error) {
 	plantModel := models.ListPlant{}
 
-	query := r.db.Debug().Model(&plantModel)
+	query := r.db.Model(&plantModel)
 
 	if filter.Category != "" {
 		query = query.Joins("INNER JOIN categories ON plants.category_id = categories.id").Where("categories.name = ?", filter.Category)

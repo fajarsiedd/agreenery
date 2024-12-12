@@ -21,7 +21,7 @@ func NewWateringScheduleRepository(db *gorm.DB) *wateringScheduleRepository {
 func (r wateringScheduleRepository) GetWateringSchedules(filter entities.Filter) ([]entities.WateringSchedule, entities.Pagination, error) {
 	wateringScheduleModel := models.ListWateringSchedule{}
 
-	query := r.db.Debug().Model(&wateringScheduleModel)
+	query := r.db.Model(&wateringScheduleModel)
 
 	if filter.Search != "" {
 		query = query.Table("watering_schedules").Where("watering_schedules.plant_name LIKE ?", "%"+filter.Search+"%")
@@ -72,7 +72,7 @@ func (r wateringScheduleRepository) GetWateringSchedule(id string) (entities.Wat
 func (r wateringScheduleRepository) CreateWateringSchedule(schedule entities.WateringSchedule) (entities.WateringSchedule, error) {
 	wateringScheduleModel := models.WateringSchedule{}.FromEntity(schedule)
 
-	if err := r.db.Create(&wateringScheduleModel).Preload("User", func(db *gorm.DB) *gorm.DB {
+	if err := r.db.Omit("User").Create(&wateringScheduleModel).Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Credential")
 	}).Find(&wateringScheduleModel).Error; err != nil {
 		return entities.WateringSchedule{}, err
@@ -94,7 +94,7 @@ func (r wateringScheduleRepository) UpdateWateringSchedule(schedule entities.Wat
 			return constants.ErrAccessNotAllowed
 		}
 
-		if err := tx.Updates(&wateringScheduleModel).Preload("User", func(db *gorm.DB) *gorm.DB {
+		if err := tx.Omit("User").Updates(&wateringScheduleModel).Preload("User", func(db *gorm.DB) *gorm.DB {
 			return db.Preload("Credential")
 		}).Find(&wateringScheduleModel).Error; err != nil {
 			return err
