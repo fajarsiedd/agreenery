@@ -9,7 +9,7 @@ type ArticleRequest struct {
 	ID            string
 	Title         string         `form:"title" validate:"required"`
 	Content       string         `form:"content" validate:"required"`
-	Thumbnail     multipart.File `form:"media"`
+	Thumbnail     multipart.File `form:"thumbnail"`
 	CategoryID    string         `form:"category_id" validate:"required"`
 	PublishStatus bool           `form:"publish_status"`
 }

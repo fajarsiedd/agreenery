@@ -7,5 +7,5 @@ type PlantRepository interface {
 	GetPlant(id string) (entities.Plant, error)
 	CreatePlant(plant entities.Plant) (entities.Plant, error)
 	UpdatePlant(plant entities.Plant) (entities.Plant, error)
-	DeletePlant(id string) error
+	DeletePlant(id string) (string, error)
 }

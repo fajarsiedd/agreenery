@@ -13,6 +13,7 @@ import (
 	regionHandler "go-agreenery/handlers/region"
 	stepHandler "go-agreenery/handlers/step"
 	userNotifHandler "go-agreenery/handlers/user_notification"
+	scheduleHandler "go-agreenery/handlers/watering_schedule"
 	weatherHandler "go-agreenery/handlers/weather"
 	"go-agreenery/middlewares"
 	articleRepo "go-agreenery/repositories/article"
@@ -25,6 +26,7 @@ import (
 	reportRepo "go-agreenery/repositories/post_report"
 	stepRepo "go-agreenery/repositories/step"
 	userNotifRepo "go-agreenery/repositories/user_notification"
+	scheduleRepo "go-agreenery/repositories/watering_schedule"
 	articleService "go-agreenery/services/article"
 	authService "go-agreenery/services/auth"
 	categoryService "go-agreenery/services/category"
@@ -36,6 +38,7 @@ import (
 	regionService "go-agreenery/services/region"
 	stepService "go-agreenery/services/step"
 	userNotifService "go-agreenery/services/user_notification"
+	scheduleService "go-agreenery/services/watering_schedule"
 	weatherService "go-agreenery/services/weather"
 	"os"
 	"time"
@@ -106,6 +109,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initUserNotificationRoute(e, db, jwtMiddlewareConfig)
 
 	initChatbotRoute(e, jwtMiddlewareConfig)
+
+	initWateringScheduleRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -270,4 +275,17 @@ func initChatbotRoute(e *echo.Echo, jwtMiddlewareConfig echojwt.Config) {
 
 	userNotif := e.Group("/api/v1/chatbot", echojwt.WithConfig(jwtMiddlewareConfig))
 	userNotif.POST("", handler.SendPrompt)
+}
+
+func initWateringScheduleRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := scheduleRepo.NewWateringScheduleRepository(db)
+	service := scheduleService.NewWateringScheduleService(repository)
+	handler := scheduleHandler.NewWateringScheduleHandler(service)
+
+	schedule := e.Group("/api/v1/schedules", echojwt.WithConfig(jwtMiddlewareConfig))
+	schedule.POST("", handler.CreateWateringSchedule)
+	schedule.GET("", handler.GetWateringSchedules)
+	schedule.GET("/:id", handler.GetWateringSchedule)
+	schedule.PUT("/:id", handler.UpdateWateringSchedule)
+	schedule.DELETE("/:id", handler.DeleteWateringSchedule)
 }
