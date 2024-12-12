@@ -7,6 +7,7 @@ import (
 	chatbotHandler "go-agreenery/handlers/chatbot"
 	commentHandler "go-agreenery/handlers/comment"
 	enrollmentHandler "go-agreenery/handlers/enrollment"
+	notificationHandler "go-agreenery/handlers/notification"
 	plantHandler "go-agreenery/handlers/plant"
 	postHandler "go-agreenery/handlers/post"
 	reportHandler "go-agreenery/handlers/post_report"
@@ -21,6 +22,7 @@ import (
 	categoryRepo "go-agreenery/repositories/category"
 	commentRepo "go-agreenery/repositories/comment"
 	enrollmentRepo "go-agreenery/repositories/enrollment"
+	notificationRepo "go-agreenery/repositories/notification"
 	plantRepo "go-agreenery/repositories/plant"
 	postRepo "go-agreenery/repositories/post"
 	reportRepo "go-agreenery/repositories/post_report"
@@ -32,6 +34,7 @@ import (
 	categoryService "go-agreenery/services/category"
 	commentService "go-agreenery/services/comment"
 	enrollmentService "go-agreenery/services/enrollment"
+	notificationService "go-agreenery/services/notification"
 	plantService "go-agreenery/services/plant"
 	postService "go-agreenery/services/post"
 	reportService "go-agreenery/services/post_report"
@@ -111,6 +114,8 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 	initChatbotRoute(e, jwtMiddlewareConfig)
 
 	initWateringScheduleRoute(e, db, jwtMiddlewareConfig)
+
+	initNotificationRoute(e, db, jwtMiddlewareConfig)
 }
 
 func initAuthRoute(e *echo.Echo, db *gorm.DB, jwtConfig *middlewares.JWTConfig, jwtMiddlewareConfig echojwt.Config) {
@@ -288,4 +293,17 @@ func initWateringScheduleRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig ec
 	schedule.GET("/:id", handler.GetWateringSchedule)
 	schedule.PUT("/:id", handler.UpdateWateringSchedule)
 	schedule.DELETE("/:id", handler.DeleteWateringSchedule)
+}
+
+func initNotificationRoute(e *echo.Echo, db *gorm.DB, jwtMiddlewareConfig echojwt.Config) {
+	repository := notificationRepo.NewNotificationRepository(db)
+	service := notificationService.NewNotificationService(repository)
+	handler := notificationHandler.NewNotificationHandler(service)
+
+	notification := e.Group("/api/v1/notifications", echojwt.WithConfig(jwtMiddlewareConfig), middlewares.AdminOnly())
+	notification.POST("", handler.CreateNotification)
+	notification.GET("", handler.GetNotifications)
+	notification.PUT("/:id", handler.UpdateNotification)
+	notification.DELETE("/:id", handler.DeleteNotification)
+	notification.POST("/:id/send", handler.SendNotification)
 }

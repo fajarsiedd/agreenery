@@ -82,6 +82,7 @@ const (
 	// NOTIFICATION
 	SendNotificationSuccess          string = "notification sent successfully"
 	GetNotificationsSuccess          string = "notifications retreived successfully"
+	UpdateNotificationSuccess        string = "notifications updated successfully"
 	DeleteNotificationSuccess        string = "notification deleted successfully"
 	CreateNotificationSuccess        string = "new notification created successfully"
 	MarkNotificationAsReadSuccess    string = "notification marked as read successfully"
