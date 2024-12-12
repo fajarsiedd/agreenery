@@ -57,7 +57,7 @@ func SendWateringScheduleNotifications(db *gorm.DB) {
 
 func SendAdminNotifications(db *gorm.DB) {
 	notifications := models.ListNotification{}
-	if err := db.Where("DATE(send_at) = CURDATE()").Find(&notifications).Error; err != nil {
+	if err := db.Where("is_sent = false AND DATE(send_at) = CURDATE()").Find(&notifications).Error; err != nil {
 		log.Printf("error fetching watering schedules %v", err)
 		return
 	}
@@ -70,8 +70,8 @@ func SendAdminNotifications(db *gorm.DB) {
 		return
 	}
 
-	for _, user := range users {
-		for _, notif := range notifications {
+	for _, notif := range notifications {
+		for _, user := range users {
 			notification := models.UserNotification{
 				UserID:    user.ID,
 				Title:     notif.Title,
@@ -84,6 +84,11 @@ func SendAdminNotifications(db *gorm.DB) {
 				log.Printf("error creating notification %v", err)
 				return
 			}
+		}
+
+		if err := db.Model(&notif).Where("id = ?", notif.ID).Update("is_sent", true).Error; err != nil {
+			log.Printf("error updating notification %v", err)
+			return
 		}
 	}
 }
