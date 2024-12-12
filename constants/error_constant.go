@@ -6,6 +6,7 @@ var (
 	// QUERY PARAMS
 	ErrInvalidStartDateParam error = errors.New("invalid 'start_date' format. must be in 'yyyy-mm-dd' format")
 	ErrInvalidEndDateParam   error = errors.New("invalid 'end_date' format. must be in 'yyyy-mm-dd' format")
+	ErrInvalidSendAt         error = errors.New("invalid 'send_at' format. must be in 'yyyy-mm-dd' format")
 
 	// VALIDATOR
 	ErrFieldRequired error = errors.New("field is required")

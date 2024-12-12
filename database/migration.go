@@ -22,5 +22,6 @@ func MigrateDB(db *gorm.DB) {
 		&models.PostReport{},
 		&models.UserNotification{},
 		&models.WateringSchedule{},
+		&models.Notification{},
 	)
 }

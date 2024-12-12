@@ -103,7 +103,7 @@ func (r postRepository) GetPost(id, currUserID string) (entities.Post, error) {
 func (r postRepository) CreatePost(post entities.Post) (entities.Post, error) {
 	postModel := models.Post{}.FromEntity(post)
 
-	if err := r.db.Omit("Category", "CountComments", "CountLikes", "IsLiked").Create(&postModel).Preload("Category").Preload("User", func(db *gorm.DB) *gorm.DB {
+	if err := r.db.Omit("User", "Category", "CountComments", "CountLikes", "IsLiked").Create(&postModel).Preload("Category").Preload("User", func(db *gorm.DB) *gorm.DB {
 		return db.Preload("Credential")
 	}).Find(&postModel).Error; err != nil {
 		return entities.Post{}, err
@@ -125,7 +125,7 @@ func (r postRepository) UpdatePost(post entities.Post, currUserID string) (entit
 			return constants.ErrAccessNotAllowed
 		}
 
-		if err := tx.Omit("Category", "CountComments", "CountLikes", "IsLiked").Updates(&postModel).Error; err != nil {
+		if err := tx.Omit("User", "Category", "CountComments", "CountLikes", "IsLiked").Updates(&postModel).Error; err != nil {
 			return err
 		}
 
