@@ -45,9 +45,8 @@ func (s postService) CreatePost(post entities.Post) (entities.Post, error) {
 	result, err := s.repository.CreatePost(post)
 	if err != nil {
 		if post.MediaFile != nil {
-			var object string
 			splittedStr := strings.Split(url, "/")
-			object = splittedStr[len(splittedStr)-1]
+			object := splittedStr[len(splittedStr)-1]
 
 			if err := helpers.DeleteFile(object); err != nil {
 				return entities.Post{}, err
@@ -61,22 +60,15 @@ func (s postService) CreatePost(post entities.Post) (entities.Post, error) {
 }
 
 func (s postService) UpdatePost(post entities.Post, currUserID string) (entities.Post, error) {
+	postDb, err := s.repository.GetPost(post.ID, post.UserID)
+	if err != nil {
+		return entities.Post{}, err
+	}
+
 	var url string
 	if post.MediaFile != nil {
-		postDb, err := s.repository.GetPost(post.ID, post.UserID)
-		if err != nil {
-			return entities.Post{}, err
-		}
-
-		var oldObj string
-		if postDb.Media != "" {
-			splittedStr := strings.Split(postDb.Media, "/")
-			oldObj = splittedStr[len(splittedStr)-1]
-		}
-
 		params := helpers.UploaderParams{
-			File:         post.MediaFile,
-			OldObjectURL: oldObj,
+			File: post.MediaFile,
 		}
 
 		result, err := helpers.UploadFile(params)
@@ -92,9 +84,8 @@ func (s postService) UpdatePost(post entities.Post, currUserID string) (entities
 	result, err := s.repository.UpdatePost(post, currUserID)
 	if err != nil {
 		if post.MediaFile != nil {
-			var object string
 			splittedStr := strings.Split(url, "/")
-			object = splittedStr[len(splittedStr)-1]
+			object := splittedStr[len(splittedStr)-1]
 
 			if err := helpers.DeleteFile(object); err != nil {
 				return entities.Post{}, err
@@ -102,6 +93,15 @@ func (s postService) UpdatePost(post entities.Post, currUserID string) (entities
 		}
 
 		return entities.Post{}, err
+	} else {
+		if post.MediaFile != nil && postDb.Media != "" {
+			splittedStr := strings.Split(postDb.Media, "/")
+			oldObj := splittedStr[len(splittedStr)-1]
+
+			if err := helpers.DeleteFile(oldObj); err != nil {
+				return entities.Post{}, err
+			}
+		}
 	}
 
 	return result, nil
@@ -114,9 +114,8 @@ func (s postService) DeletePost(id, currUserID string, isAdmin bool) error {
 	}
 
 	if media != "" {
-		var oldObj string
 		splittedStr := strings.Split(media, "/")
-		oldObj = splittedStr[len(splittedStr)-1]
+		oldObj := splittedStr[len(splittedStr)-1]
 
 		if err := helpers.DeleteFile(oldObj); err != nil {
 			return err

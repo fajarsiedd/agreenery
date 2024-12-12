@@ -45,9 +45,8 @@ func (s articleService) CreateArticle(article entities.Article) (entities.Articl
 	result, err := s.repository.CreateArticle(article)
 	if err != nil {
 		if article.ThumbnailFile != nil {
-			var object string
 			splittedStr := strings.Split(url, "/")
-			object = splittedStr[len(splittedStr)-1]
+			object := splittedStr[len(splittedStr)-1]
 
 			if err := helpers.DeleteFile(object); err != nil {
 				return entities.Article{}, err
@@ -61,22 +60,15 @@ func (s articleService) CreateArticle(article entities.Article) (entities.Articl
 }
 
 func (s articleService) UpdateArticle(article entities.Article) (entities.Article, error) {
+	articleDb, err := s.repository.GetArticle(article.ID)
+	if err != nil {
+		return entities.Article{}, err
+	}
+
 	var url string
 	if article.ThumbnailFile != nil {
-		articleDb, err := s.repository.GetArticle(article.ID)
-		if err != nil {
-			return entities.Article{}, err
-		}
-
-		var oldObj string
-		if articleDb.Thumbnail != "" {
-			splittedStr := strings.Split(articleDb.Thumbnail, "/")
-			oldObj = splittedStr[len(splittedStr)-1]
-		}
-
 		params := helpers.UploaderParams{
-			File:         article.ThumbnailFile,
-			OldObjectURL: oldObj,
+			File: article.ThumbnailFile,
 		}
 
 		result, err := helpers.UploadFile(params)
@@ -92,9 +84,8 @@ func (s articleService) UpdateArticle(article entities.Article) (entities.Articl
 	result, err := s.repository.UpdateArticle(article)
 	if err != nil {
 		if article.ThumbnailFile != nil {
-			var object string
 			splittedStr := strings.Split(url, "/")
-			object = splittedStr[len(splittedStr)-1]
+			object := splittedStr[len(splittedStr)-1]
 
 			if err := helpers.DeleteFile(object); err != nil {
 				return entities.Article{}, err
@@ -102,6 +93,15 @@ func (s articleService) UpdateArticle(article entities.Article) (entities.Articl
 		}
 
 		return entities.Article{}, err
+	} else {
+		if article.ThumbnailFile != nil && articleDb.Thumbnail != "" {
+			splittedStr := strings.Split(articleDb.Thumbnail, "/")
+			oldObj := splittedStr[len(splittedStr)-1]
+
+			if err := helpers.DeleteFile(oldObj); err != nil {
+				return entities.Article{}, err
+			}
+		}
 	}
 
 	return result, nil
@@ -114,9 +114,8 @@ func (s articleService) DeleteArticle(id string) error {
 	}
 
 	if media != "" {
-		var oldObj string
 		splittedStr := strings.Split(media, "/")
-		oldObj = splittedStr[len(splittedStr)-1]
+		oldObj := splittedStr[len(splittedStr)-1]
 
 		if err := helpers.DeleteFile(oldObj); err != nil {
 			return err
