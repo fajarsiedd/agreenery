@@ -94,16 +94,21 @@ func (r plantRepository) UpdatePlant(plant entities.Plant) (entities.Plant, erro
 	return plantModel.ToEntity(), nil
 }
 
-func (r plantRepository) DeletePlant(id string) error {
-	plantModel := models.Plant{}
-	stepModel := models.Step{}
-
+func (r plantRepository) DeletePlant(id string) (string, error) {
+	var image string
 	err := r.db.Transaction(func(tx *gorm.DB) error {
-		if err := r.db.Unscoped().Where("plant_id = ?", id).Delete(&stepModel).Error; err != nil {
+		plantDb := models.Plant{}
+		if err := tx.First(&plantDb, &id).Error; err != nil {
 			return err
 		}
 
-		if err := r.db.Unscoped().Delete(&plantModel, &id).Error; err != nil {
+		image = plantDb.Image
+
+		if err := tx.Unscoped().Where("plant_id = ?", id).Delete(&models.Step{}).Error; err != nil {
+			return err
+		}
+
+		if err := tx.Unscoped().Delete(&models.Plant{}, &id).Error; err != nil {
 			return err
 		}
 
@@ -111,8 +116,8 @@ func (r plantRepository) DeletePlant(id string) error {
 	})
 
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	return nil
+	return image, nil
 }
