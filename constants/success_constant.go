@@ -89,4 +89,11 @@ const (
 
 	// CHATBOT
 	SendPromptSuccess string = "response generated successfully"
+
+	// ARTICLE
+	GetWateringSchedulesSuccess   string = "watering schedules retreived successfully"
+	GetWateringScheduleSuccess    string = "watering schedule retreived successfully"
+	UpdateWateringScheduleSuccess string = "watering schedule updated successfully"
+	DeleteWateringScheduleSuccess string = "watering schedule deleted successfully"
+	CreateWateringScheduleSuccess string = "new watering schedule created successfully"
 )
