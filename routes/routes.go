@@ -83,7 +83,7 @@ func InitRoutes(e *echo.Echo, db *gorm.DB) {
 
 	jwtConfig := middlewares.JWTConfig{
 		SecretKey:       os.Getenv("JWT_SECRET_KEY"),
-		ExpiresDuration: 1,
+		ExpiresDuration: 1 * 24 * 7,
 	}
 	jwtMiddlewareConfig := jwtConfig.NewJWTConfig()
 
