@@ -51,7 +51,7 @@ func (h notificationHandler) CreateNotification(c echo.Context) error {
 
 	notification := req.ToEntity()
 
-	location, _ := time.LoadLocation("Asia/Bangkok")
+	location, _ := time.LoadLocation("Asia/Jakarta")
 	parsedDate, err := time.Parse("2006-01-02", req.SendAt)
 	if err != nil {
 		return base.ErrorResponse(c, constants.ErrInvalidSendAt)
@@ -87,7 +87,7 @@ func (h notificationHandler) UpdateNotification(c echo.Context) error {
 
 	notification := req.ToEntity()
 
-	location, _ := time.LoadLocation("Asia/Bangkok")
+	location, _ := time.LoadLocation("Asia/Jakarta")
 	parsedDate, err := time.Parse("2006-01-02", req.SendAt)
 	if err != nil {
 		return base.ErrorResponse(c, constants.ErrInvalidSendAt)

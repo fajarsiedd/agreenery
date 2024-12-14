@@ -24,6 +24,8 @@ COPY .env .env
 
 RUN apk update && apk add --no-cache ca-certificates
 
+RUN apk --no-cache add tzdata
+
 EXPOSE 80
 
 CMD ["./main"]

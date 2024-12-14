@@ -23,7 +23,7 @@ func main() {
 
 	routes.InitRoutes(e, db)
 
-	c := cron.New(cron.WithLocation(time.FixedZone("Asia/Bangkok", 7*60*60)))
+	c := cron.New(cron.WithLocation(time.FixedZone("Asia/Jakarta", 7*60*60)))
 
 	c.AddFunc("0 6 * * *", func() {
 		helpers.SendWateringScheduleNotifications(db)
