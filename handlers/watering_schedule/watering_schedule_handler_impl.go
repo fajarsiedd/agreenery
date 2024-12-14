@@ -92,7 +92,7 @@ func (h wateringScheduleHandler) CreateWateringSchedule(c echo.Context) error {
 	schedule := req.ToEntity()
 	schedule.UserID = claims.UserID
 
-	location, _ := time.LoadLocation("Asia/Jakarta")
+	location, _ := time.LoadLocation("Asia/Bangkok")
 	parsedStartDate, err := time.Parse("2006-01-02", req.StartDate)
 	if err != nil {
 		return base.ErrorResponse(c, constants.ErrInvalidStartDateParam)
@@ -155,7 +155,7 @@ func (h wateringScheduleHandler) UpdateWateringSchedule(c echo.Context) error {
 
 	schedule := req.ToEntity()
 
-	location, _ := time.LoadLocation("Asia/Jakarta")
+	location, _ := time.LoadLocation("Asia/Bangkok")
 	parsedStartDate, err := time.Parse("2006-01-02", req.StartDate)
 	if err != nil {
 		return base.ErrorResponse(c, constants.ErrInvalidStartDateParam)
