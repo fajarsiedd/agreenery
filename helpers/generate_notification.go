@@ -30,7 +30,7 @@ func SendWateringScheduleNotifications(db *gorm.DB) {
 	today := now.Weekday().String()
 
 	schedules := models.ListWateringSchedule{}
-	if err := db.Where("start_date <= ? AND end_date >= ?", now, now).Find(&schedules).Error; err != nil {
+	if err := db.Where("start_date <= ? AND end_date >= ? AND turn_on_notif = true", now, now).Find(&schedules).Error; err != nil {
 		log.Printf("error fetching watering schedules %v", err)
 		return
 	}
